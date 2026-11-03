@@ -12,7 +12,7 @@ export default function DaftarFavorit() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIds(JSON.parse(localStorage.getItem("favorit") ?? "[]"));
-    fetch("/api/events")
+    fetch("/api/event")
       .then((r) => {
         if (!r.ok) throw new Error("Gagal mengambil data");
         return r.json();
