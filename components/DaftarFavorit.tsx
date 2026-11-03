@@ -12,7 +12,7 @@ export default function DaftarFavorit() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIds(JSON.parse(localStorage.getItem("favorit") ?? "[]"));
-    fetch("/api/event")
+    fetch("/api/events")
       .then((r) => {
         if (!r.ok) throw new Error("Gagal mengambil data");
         return r.json();
@@ -22,23 +22,27 @@ export default function DaftarFavorit() {
       .finally(() => setMemuat(false));
   }, []);
 
-  if (memuat) return <p>Memuat...</p>;
-  if (galat) return <p className="text-red-600">{galat}</p>;
+  if (memuat) return <p className="text-white">Memuat...</p>;
+  if (galat) return <p className="text-red-500">{galat}</p>;
 
   const daftar = semua.filter((e) => ids.includes(e.id));
   if (daftar.length === 0)
-    return <p className="text-slate-500">Belum ada favorit.</p>;
+    return <p className="text-slate-400">Belum ada favorit.</p>;
 
   return (
     <ul className="space-y-2">
       {daftar.map((e) => (
-        <li key={e.id}>
+        <li key={e.id} className="flex items-center gap-3">
           <Link
             href={`/event/${e.id}`}
-            className="text-blue-600 hover:underline"
+            className="text-blue-400 hover:underline font-medium"
           >
             {e.judul}
           </Link>
+          {/* Harga ditampilkan di samping judul dengan warna putih terang */}
+          <span className="text-white font-semibold">
+            - Rp {e.harga.toLocaleString("id-ID")}
+          </span>
         </li>
       ))}
     </ul>
