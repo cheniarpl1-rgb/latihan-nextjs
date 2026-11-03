@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -5,6 +7,7 @@ const menu = [
   { href: "/", teks: "Beranda" },
   { href: "/event", teks: "Event" },
   { href: "/tentang", teks: "Tentang" },
+  { href: "/kontak", teks: "Kontak" }, // <-- Tambahan menu baru
 ];
 
 export default function Navbar() {
