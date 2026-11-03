@@ -6,8 +6,9 @@ import { usePathname } from "next/navigation";
 const menu = [
   { href: "/", teks: "Beranda" },
   { href: "/event", teks: "Event" },
+  { href: "/favorit", teks: "Favorit" }, // <-- Menu Favorit ditambahkan di sini
   { href: "/tentang", teks: "Tentang" },
-  { href: "/kontak", teks: "Kontak" }, // <-- Tambahan menu baru
+  { href: "/kontak", teks: "Kontak" },
 ];
 
 export default function Navbar() {
