@@ -6,7 +6,7 @@ import KartuEvent from "./KartuEvent";
 export default function KatalogInteraktif({ events }: { events: Event[] }) {
   const [cari, setCari] = useState("");
   const [kategori, setKategori] = useState("Semua");
-  const [urut, setUrut] = useState("tanggal");
+  const [urut, setUrut] = useState(localStorage.getItem("urut") ?? "tanggal");
   const [batas, setBatas] = useState(4); // State untuk batasan jumlah kartu awal
 
   const daftarKategori = ["Semua", ...new Set(events.map((e) => e.kategori))];
