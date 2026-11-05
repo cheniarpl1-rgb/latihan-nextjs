@@ -3,18 +3,26 @@ import { rupiah, type Event } from "@/data/events";
 
 export default function KartuEvent({ event }: { event: Event }) {
   const sisa = event.kuota - event.terisi;
+  const laris = sisa > 0 && event.terisi / event.kuota >= 0.5;
   return (
     <div className="rounded-xl border bg-white p-4 shadow-sm">
       <span className="rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
         {event.kategori}
       </span>
+      {laris && (
+        <span className="ml-2 rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+          Laris
+        </span>
+      )}
       <h3 className="mt-2 text-lg font-semibold">{event.judul}</h3>
-      <p className="mt-1 text-sm text-slate-500">
-        {event.tanggal} &bull; {event.lokasi}
+      <p className="mt-2 text-sm text-slate-500">
+        {event.tanggal} · {event.lokasi}
       </p>
       <p className="mt-2 font-medium">{rupiah(event.harga)}</p>
       <p
-        className={`mt-1 text-sm ${sisa === 0 ? "text-red-600" : "text-green-600"}`}
+        className={
+          sisa === 0 ? "text-sm text-red-600" : "text-sm text-green-700"
+        }
       >
         {sisa === 0 ? "Tiket habis" : `Sisa ${sisa} tiket`}
       </p>

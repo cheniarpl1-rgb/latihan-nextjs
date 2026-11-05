@@ -29,12 +29,12 @@ export default function KatalogInteraktif({ events }: { events: Event[] }) {
           value={cari}
           onChange={(e) => setCari(e.target.value)}
           placeholder="Cari event..."
-          className="rounded border bg-white px-3 py-2"
+          className="rounded border bg-white px-3 py-2 text-black"
         />
         <select
           value={kategori}
           onChange={(e) => setKategori(e.target.value)}
-          className="rounded border bg-white px-3 py-2"
+          className="rounded border bg-white px-3 py-2 text-black"
         >
           {daftarKategori.map((k) => (
             <option key={k} value={k}>
@@ -45,7 +45,7 @@ export default function KatalogInteraktif({ events }: { events: Event[] }) {
         <select
           value={urut}
           onChange={(e) => setUrut(e.target.value)}
-          className="rounded border bg-white px-3 py-2"
+          className="rounded border bg-white px-3 py-2 text-black"
         >
           <option value="tanggal">Tanggal terdekat</option>
           <option value="murah">Harga termurah</option>
