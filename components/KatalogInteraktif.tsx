@@ -6,15 +6,25 @@ import KartuEvent from "./KartuEvent";
 export default function KatalogInteraktif({ events }: { events: Event[] }) {
   const [cari, setCari] = useState("");
   const [kategori, setKategori] = useState("Semua");
-  const [urut, setUrut] = useState(localStorage.getItem("urut") ?? "tanggal");
-  const [batas, setBatas] = useState(4); // State untuk batasan jumlah kartu awal
+  const [urut, setUrut] = useState("tanggal");
+  const [batas, setBatas] = useState(4);
+
+  // State baru untuk penyaring lanjutan
+  const [adaTiket, setAdaTiket] = useState(false);
+  const [hargaMaks, setHargaMaks] = useState("");
 
   const daftarKategori = ["Semua", ...new Set(events.map((e) => e.kategori))];
-  const hasil = events.filter(
-    (e) =>
-      e.judul.toLowerCase().includes(cari.toLowerCase()) &&
-      (kategori === "Semua" || e.kategori === kategori),
-  );
+
+  // Logika penyaringan yang diperbarui
+  const hasil = events.filter((e) => {
+    const sisaTiket = e.kuota - e.terisi;
+    const cocokCari = e.judul.toLowerCase().includes(cari.toLowerCase());
+    const cocokKategori = kategori === "Semua" || e.kategori === kategori;
+    const cocokAdaTiket = !adaTiket || sisaTiket > 0;
+    const cocokHarga = hargaMaks === "" || e.harga <= Number(hargaMaks);
+
+    return cocokCari && cocokKategori && cocokAdaTiket && cocokHarga;
+  });
 
   const tersusun = [...hasil].sort((a, b) => {
     if (urut === "murah") return a.harga - b.harga;
@@ -36,12 +46,12 @@ export default function KatalogInteraktif({ events }: { events: Event[] }) {
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap gap-3">
+      <div className="mb-4 flex flex-wrap gap-3 items-center">
         <input
           value={cari}
           onChange={(e) => {
             setCari(e.target.value);
-            setBatas(4); // Reset ke 4 saat mencari
+            setBatas(4);
           }}
           placeholder="Cari event..."
           className="rounded border bg-white px-3 py-2 text-black"
@@ -50,7 +60,7 @@ export default function KatalogInteraktif({ events }: { events: Event[] }) {
           value={kategori}
           onChange={(e) => {
             setKategori(e.target.value);
-            setBatas(4); // Reset ke 4 saat ganti kategori
+            setBatas(4);
           }}
           className="rounded border bg-white px-3 py-2 text-black"
         >
@@ -64,7 +74,7 @@ export default function KatalogInteraktif({ events }: { events: Event[] }) {
           value={urut}
           onChange={(e) => {
             setUrut(e.target.value);
-            setBatas(4); // Reset ke 4 saat ganti urutan
+            setBatas(4);
           }}
           className="rounded border bg-white px-3 py-2 text-black"
         >
@@ -73,7 +83,33 @@ export default function KatalogInteraktif({ events }: { events: Event[] }) {
           <option value="mahal">Harga termahal</option>
           <option value="nama">Nama A-Z</option>
         </select>
+
+        {/* Checkbox Hanya yang masih ada tiket */}
+        <label className="flex items-center gap-2 text-sm text-slate-700">
+          <input
+            type="checkbox"
+            checked={adaTiket}
+            onChange={(e) => {
+              setAdaTiket(e.target.checked);
+              setBatas(4);
+            }}
+          />
+          Hanya yang masih ada tiket
+        </label>
+
+        {/* Input Harga Maksimal */}
+        <input
+          type="number"
+          value={hargaMaks}
+          onChange={(e) => {
+            setHargaMaks(e.target.value);
+            setBatas(4);
+          }}
+          placeholder="Harga maksimal"
+          className="rounded border bg-white px-3 py-2 text-black"
+        />
       </div>
+
       <p className="mb-1 text-sm text-slate-500">
         {tersusun.length} event ditemukan
       </p>
