@@ -30,10 +30,43 @@ export const events: Event[] = [
     kuota: 150,
     terisi: 54,
   },
+  {
+    id: 3,
+    judul: "Turnamen Futsal",
+    kategori: "Olahraga",
+    tanggal: "2026-11-30",
+    lokasi: "GOR Kampus",
+    harga: 10000,
+    kuota: 50,
+    terisi: 10,
+  },
+  {
+    id: 4,
+    judul: "Pameran Karya Seni Digital",
+    kategori: "Pameran",
+    tanggal: "2026-12-01",
+    lokasi: "Galeri Seni",
+    harga: 15000,
+    kuota: 40,
+    terisi: 40, // Kuota sama dengan terisi = TIKET HABIS
+  },
+  {
+    id: 5,
+    judul: "Seminar Karir & Teknologi",
+    kategori: "Seminar",
+    tanggal: "2026-12-05",
+    lokasi: "Auditorium Utama",
+    harga: 0,
+    kuota: 200,
+    terisi: 45,
+  },
 ];
 
-// Tambahkan fungsi helper ini di bagian bawah file events.ts
 export function getEvent(id: string | number): Event | undefined {
   const eventId = Number(id);
   return events.find((e) => e.id === eventId);
+}
+
+export function rupiah(angka: number): string {
+  return "Rp " + angka.toLocaleString("id-ID");
 }

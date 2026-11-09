@@ -48,12 +48,14 @@ export async function pesanTiket(
     };
   }
 
-  // --- TAMBAHKAN BARIS INI (Sesuai Langkah 7) ---
   console.log("Pesanan masuk:", nama, jumlah);
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
+  // --- TAMBAHKAN REVALIDATE PATH DI SINI ---
+  revalidatePath("/event");
   revalidatePath(`/event/${eventId}`);
+  revalidatePath("/pesanan");
 
   return {
     berhasil: true,

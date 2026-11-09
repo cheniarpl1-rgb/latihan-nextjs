@@ -1,4 +1,4 @@
-import { getEvent } from "@/data/events";
+import { getEvent, rupiah } from "@/data/events";
 import { notFound } from "next/navigation";
 import FormPesan from "./form-pemesanan";
 
@@ -25,11 +25,7 @@ export default async function Page({
       </p>
 
       <div className="mt-4">
-        <p className="text-xl font-bold">
-          {event.harga === 0
-            ? "Gratis"
-            : `Rp ${event.harga.toLocaleString("id-ID")}`}
-        </p>
+        <p className="text-xl font-bold">{rupiah(event.harga)}</p>
         <p className="text-sm text-slate-600">
           Sisa {event.kuota - event.terisi} dari {event.kuota} tiket
         </p>
