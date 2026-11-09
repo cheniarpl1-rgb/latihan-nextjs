@@ -1,36 +1,41 @@
+import { getEvent } from "@/data/events";
 import { notFound } from "next/navigation";
-import { events, rupiah } from "@/data/events";
-import FormPesan from "@/components/FormPesan";
-import TombolFavorit from "@/components/TombolFavorit";
+import FormPesan from "./form-pemesanan";
 
-type PageProps = {
+export default async function Page({
+  params,
+}: {
   params: Promise<{ id: string }>;
-};
-
-export default async function Detail({ params }: PageProps) {
+}) {
   const { id } = await params;
-  const event = events.find((e) => e.id === Number(id));
-  if (!event) notFound();
+  const event = getEvent(id);
 
-  const sisa = event.kuota - event.terisi;
+  if (!event) {
+    notFound();
+  }
+
   return (
-    <article className="rounded-xl border bg-white p-6 text-slate-800">
-      <span className="rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
+    <main className="max-w-2xl mx-auto p-6">
+      <span className="text-xs bg-blue-100 text-blue-800 px-2.5 py-1 rounded font-medium">
         {event.kategori}
       </span>
-      <h1 className="mt-2 text-3xl font-bold">{event.judul}</h1>
-      <p className="mt-1 text-slate-500">
+      <h1 className="text-3xl font-bold mt-2">{event.judul}</h1>
+      <p className="text-slate-600 text-sm mt-1">
         {event.tanggal} • {event.lokasi}
       </p>
-      <p className="mt-4 text-xl font-semibold">{rupiah(event.harga)}</p>
-      <p className="text-slate-600">
-        Sisa {sisa} dari {event.kuota} tiket
-      </p>
 
-      {/* Tombol Favorit diletakkan di sini */}
-      <TombolFavorit id={event.id} />
+      <div className="mt-4">
+        <p className="text-xl font-bold">
+          {event.harga === 0
+            ? "Gratis"
+            : `Rp ${event.harga.toLocaleString("id-ID")}`}
+        </p>
+        <p className="text-sm text-slate-600">
+          Sisa {event.kuota - event.terisi} dari {event.kuota} tiket
+        </p>
+      </div>
 
       <FormPesan event={event} />
-    </article>
+    </main>
   );
 }
