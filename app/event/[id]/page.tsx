@@ -1,37 +1,26 @@
-import { getEvent, rupiah } from "@/data/events";
+import { cookies } from "next/headers";
+import { events } from "@/data/events";
+import FormPesan from "@/components/FormPesan";
 import { notFound } from "next/navigation";
-import FormPesan from "./form-pemesanan";
 
-export default async function Page({
+export default async function DetailEventPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const event = getEvent(id);
+  const event = events.find((e) => e.id === Number(id));
 
   if (!event) {
     notFound();
   }
 
+  const namaAwal = (await cookies()).get("nama")?.value ?? "";
+
   return (
-    <main className="max-w-2xl mx-auto p-6">
-      <span className="text-xs bg-blue-100 text-blue-800 px-2.5 py-1 rounded font-medium">
-        {event.kategori}
-      </span>
-      <h1 className="text-3xl font-bold mt-2">{event.judul}</h1>
-      <p className="text-slate-600 text-sm mt-1">
-        {event.tanggal} • {event.lokasi}
-      </p>
-
-      <div className="mt-4">
-        <p className="text-xl font-bold">{rupiah(event.harga)}</p>
-        <p className="text-sm text-slate-600">
-          Sisa {event.kuota - event.terisi} dari {event.kuota} tiket
-        </p>
-      </div>
-
-      <FormPesan event={event} />
-    </main>
+    <div className="max-w-xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">{event.judul}</h1>
+      <FormPesan event={event} namaAwal={namaAwal} />
+    </div>
   );
 }

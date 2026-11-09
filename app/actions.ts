@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 
 export type HasilPesanan = {
   berhasil: boolean;
@@ -52,7 +53,10 @@ export async function pesanTiket(
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  // --- TAMBAHKAN REVALIDATE PATH DI SINI ---
+  // Simpan nama ke cookie selama 30 hari
+  const toples = await cookies();
+  toples.set("nama", nama, { maxAge: 60 * 60 * 24 * 30 });
+
   revalidatePath("/event");
   revalidatePath(`/event/${eventId}`);
   revalidatePath("/pesanan");

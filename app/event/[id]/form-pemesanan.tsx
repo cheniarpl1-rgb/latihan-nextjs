@@ -1,90 +1,83 @@
 "use client";
 
-import { useActionState, useState } from "react";
-import { pesanTiket, type HasilPesanan } from "../../actions";
-import { rupiah, type Event } from "@/data/events";
+import { useActionState } from "react";
+import { pesanTiket, HasilPesanan } from "@/app/actions";
+import { Event } from "@/data/events";
 
 export default function FormPesan({
-  event: { id, kuota, terisi, harga },
+  event,
+  namaAwal,
 }: {
   event: Event;
+  namaAwal: string;
 }) {
   const awal: HasilPesanan = {
     berhasil: false,
     pesan: "",
     galat: {},
-    isian: { nama: "", email: "" },
+    isian: { nama: namaAwal, email: "" },
   };
-  const [hasil, kirim, sedangKirim] = useActionState(pesanTiket, awal);
-  const [jumlah, setJumlah] = useState(1);
-  const sisa = kuota - terisi;
 
-  if (sisa === 0) {
-    return <p className="mt-6 font-medium text-red-600">Tiket sudah habis.</p>;
-  }
+  const [state, formAction, isPending] = useActionState(pesanTiket, awal);
 
   return (
-    <form action={kirim} className="mt-6 space-y-3 border-t pt-4">
-      <h2 className="text-lg font-semibold">Pesan tiket</h2>
-      <input type="hidden" name="eventId" value={id} />
+    <form action={formAction} className="flex flex-col gap-3">
+      <input type="hidden" name="eventId" value={event.id} />
 
       <div>
+        <label className="block text-sm font-medium">Nama</label>
         <input
+          type="text"
           name="nama"
-          defaultValue={hasil.isian.nama}
-          placeholder="Nama pemesan"
-          className="block w-full rounded border px-3 py-2 bg-white text-slate-900"
+          defaultValue={state.isian.nama}
+          className="w-full border rounded p-2"
         />
-        {hasil.galat.nama && (
-          <p className="text-sm text-red-600">{hasil.galat.nama}</p>
+        {state.galat.nama && (
+          <p className="text-red-500 text-xs">{state.galat.nama}</p>
         )}
       </div>
 
       <div>
+        <label className="block text-sm font-medium">Email</label>
         <input
+          type="email"
           name="email"
-          defaultValue={hasil.isian.email}
-          placeholder="Email"
-          className="block w-full rounded border px-3 py-2 bg-white text-slate-900"
+          defaultValue={state.isian.email}
+          className="w-full border rounded p-2"
         />
-        {hasil.galat.email && (
-          <p className="text-sm text-red-600">{hasil.galat.email}</p>
+        {state.galat.email && (
+          <p className="text-red-500 text-xs">{state.galat.email}</p>
         )}
       </div>
 
       <div>
+        <label className="block text-sm font-medium">Jumlah Tiket</label>
         <input
-          name="jumlah"
           type="number"
-          value={jumlah}
-          onChange={(e) => setJumlah(Number(e.target.value))}
-          className="block w-32 rounded border px-3 py-2 bg-white text-slate-900"
+          name="jumlah"
+          defaultValue={1}
+          min={1}
+          max={5}
+          className="w-full border rounded p-2"
         />
-        {hasil.galat.jumlah && (
-          <p className="text-sm text-red-600">{hasil.galat.jumlah}</p>
+        {state.galat.jumlah && (
+          <p className="text-red-500 text-xs">{state.galat.jumlah}</p>
         )}
       </div>
-
-      <p className="text-slate-900">
-        Total: <b>{rupiah(harga * jumlah)}</b>
-      </p>
-
-      {hasil.pesan && (
-        <p
-          className={
-            hasil.berhasil ? "text-green-700 font-bold" : "text-red-600"
-          }
-        >
-          {hasil.pesan}
-        </p>
-      )}
 
       <button
-        disabled={sedangKirim}
-        className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50 font-bold"
+        type="submit"
+        disabled={isPending}
+        className="bg-blue-600 text-white rounded p-2 hover:bg-blue-700 disabled:opacity-50"
       >
-        {sedangKirim ? "Memproses..." : "Pesan"}
+        {isPending ? "Memproses..." : "Pesan Tiket"}
       </button>
+
+      {state.pesan && (
+        <p className={state.berhasil ? "text-green-600" : "text-red-600"}>
+          {state.pesan}
+        </p>
+      )}
     </form>
   );
 }

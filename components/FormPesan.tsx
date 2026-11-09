@@ -1,57 +1,83 @@
 "use client";
 
-import { useState } from "react";
-import { rupiah, type Event } from "@/data/events";
+import { useActionState } from "react";
+import { pesanTiket, HasilPesanan } from "@/app/actions";
+import { Event } from "@/data/events";
 
-export default function FormPesan({ event }: { event: Event }) {
-  const sisa = event.kuota - event.terisi;
-  const [nama, setNama] = useState("");
-  const [jumlah, setJumlah] = useState(1);
-  const [pesan, setPesan] = useState("");
-  const [berhasil, setBerhasil] = useState(false);
+export default function FormPesan({
+  event,
+  namaAwal,
+}: {
+  event: Event;
+  namaAwal: string;
+}) {
+  const awal: HasilPesanan = {
+    berhasil: false,
+    pesan: "",
+    galat: {},
+    isian: { nama: namaAwal, email: "" },
+  };
 
-  function kirim(e: React.FormEvent) {
-    e.preventDefault();
-    setBerhasil(false);
-    if (nama.trim().length < 3) return setPesan("Nama minimal 3 huruf.");
-    if (jumlah < 1) return setPesan("Jumlah tiket minimal 1.");
-    if (jumlah > sisa) return setPesan(`Sisa tiket hanya ${sisa}.`);
-    setPesan("");
-    setBerhasil(true);
-  }
-
-  if (sisa === 0) {
-    return <p className="mt-6 font-medium text-red-600">Tiket sudah habis.</p>;
-  }
+  const [state, formAction, isPending] = useActionState(pesanTiket, awal);
 
   return (
-    <form onSubmit={kirim} className="mt-6 space-y-3 border-t pt-4">
-      <h2 className="text-lg font-semibold">Pesan tiket</h2>
-      <input
-        value={nama}
-        onChange={(e) => setNama(e.target.value)}
-        placeholder="Nama pemesan"
-        className="block w-full rounded border bg-white px-3 py-2 text-slate-800"
-      />
-      <input
-        type="number"
-        value={jumlah}
-        onChange={(e) => setJumlah(Number(e.target.value))}
-        className="block w-32 rounded border bg-white px-3 py-2 text-slate-800"
-      />
-      <p>
-        Total: <b>{rupiah(event.harga * jumlah)}</b>
-      </p>
-      {pesan && <p className="text-red-600">{pesan}</p>}
-      {berhasil && (
-        <p className="text-green-700">
-          Terima kasih {nama}! {jumlah} tiket dipesan (belum tersimpan, ini
-          masih latihan).
+    <form action={formAction} className="flex flex-col gap-3">
+      <input type="hidden" name="eventId" value={event.id} />
+
+      <div>
+        <label className="block text-sm font-medium">Nama</label>
+        <input
+          type="text"
+          name="nama"
+          defaultValue={state.isian.nama}
+          className="w-full border rounded p-2"
+        />
+        {state.galat.nama && (
+          <p className="text-red-500 text-xs">{state.galat.nama}</p>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium">Email</label>
+        <input
+          type="email"
+          name="email"
+          defaultValue={state.isian.email}
+          className="w-full border rounded p-2"
+        />
+        {state.galat.email && (
+          <p className="text-red-500 text-xs">{state.galat.email}</p>
+        )}
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium">Jumlah Tiket</label>
+        <input
+          type="number"
+          name="jumlah"
+          defaultValue={1}
+          min={1}
+          max={5}
+          className="w-full border rounded p-2"
+        />
+        {state.galat.jumlah && (
+          <p className="text-red-500 text-xs">{state.galat.jumlah}</p>
+        )}
+      </div>
+
+      <button
+        type="submit"
+        disabled={isPending}
+        className="bg-blue-600 text-white rounded p-2 hover:bg-blue-700 disabled:opacity-50"
+      >
+        {isPending ? "Memproses..." : "Pesan Tiket"}
+      </button>
+
+      {state.pesan && (
+        <p className={state.berhasil ? "text-green-600" : "text-red-600"}>
+          {state.pesan}
         </p>
       )}
-      <button className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-        Pesan
-      </button>
     </form>
   );
 }
