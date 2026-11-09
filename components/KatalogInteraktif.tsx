@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { rupiah, type Event } from "@/data/events";
 import KartuEvent from "./KartuEvent";
-import KontrolKatalog from "./KontrolKatalog";
 
 export default function KatalogInteraktif({ events }: { events: Event[] }) {
   const [cari, setCari] = useState("");
@@ -10,11 +9,13 @@ export default function KatalogInteraktif({ events }: { events: Event[] }) {
   const [urut, setUrut] = useState("tanggal");
   const [batas, setBatas] = useState(4);
 
+  // State baru untuk penyaring lanjutan
   const [adaTiket, setAdaTiket] = useState(false);
   const [hargaMaks, setHargaMaks] = useState("");
 
   const daftarKategori = ["Semua", ...new Set(events.map((e) => e.kategori))];
 
+  // Logika penyaringan yang diperbarui
   const hasil = events.filter((e) => {
     const sisaTiket = e.kuota - e.terisi;
     const cocokCari = e.judul.toLowerCase().includes(cari.toLowerCase());
@@ -32,8 +33,10 @@ export default function KatalogInteraktif({ events }: { events: Event[] }) {
     return a.tanggal.localeCompare(b.tanggal);
   });
 
+  // Memotong data sesuai dengan state batas
   const dataTampil = tersusun.slice(0, batas);
 
+  // Perhitungan statistik katalog
   const totalHarga = tersusun.reduce((acc, e) => acc + e.harga, 0);
   const rataRataHarga = tersusun.length > 0 ? totalHarga / tersusun.length : 0;
   const totalSisaTiket = tersusun.reduce(
@@ -43,20 +46,69 @@ export default function KatalogInteraktif({ events }: { events: Event[] }) {
 
   return (
     <div>
-      <KontrolKatalog
-        cari={cari}
-        setCari={setCari}
-        kategori={kategori}
-        setKategori={setKategori}
-        daftarKategori={daftarKategori}
-        urut={urut}
-        setUrut={setUrut}
-        adaTiket={adaTiket}
-        setAdaTiket={setAdaTiket}
-        hargaMaks={hargaMaks}
-        setHargaMaks={setHargaMaks}
-        setBatas={setBatas}
-      />
+      <div className="mb-4 flex flex-wrap gap-3 items-center">
+        <input
+          value={cari}
+          onChange={(e) => {
+            setCari(e.target.value);
+            setBatas(4);
+          }}
+          placeholder="Cari event..."
+          className="rounded border bg-white px-3 py-2 text-black"
+        />
+        <select
+          value={kategori}
+          onChange={(e) => {
+            setKategori(e.target.value);
+            setBatas(4);
+          }}
+          className="rounded border bg-white px-3 py-2 text-black"
+        >
+          {daftarKategori.map((k) => (
+            <option key={k} value={k}>
+              {k}
+            </option>
+          ))}
+        </select>
+        <select
+          value={urut}
+          onChange={(e) => {
+            setUrut(e.target.value);
+            setBatas(4);
+          }}
+          className="rounded border bg-white px-3 py-2 text-black"
+        >
+          <option value="tanggal">Tanggal terdekat</option>
+          <option value="murah">Harga termurah</option>
+          <option value="mahal">Harga termahal</option>
+          <option value="nama">Nama A-Z</option>
+        </select>
+
+        {/* Checkbox Hanya yang masih ada tiket */}
+        <label className="flex items-center gap-2 text-sm text-slate-700">
+          <input
+            type="checkbox"
+            checked={adaTiket}
+            onChange={(e) => {
+              setAdaTiket(e.target.checked);
+              setBatas(4);
+            }}
+          />
+          Hanya yang masih ada tiket
+        </label>
+
+        {/* Input Harga Maksimal */}
+        <input
+          type="number"
+          value={hargaMaks}
+          onChange={(e) => {
+            setHargaMaks(e.target.value);
+            setBatas(4);
+          }}
+          placeholder="Harga maksimal"
+          className="rounded border bg-white px-3 py-2 text-black"
+        />
+      </div>
 
       <p className="mb-1 text-sm text-slate-500">
         {tersusun.length} event ditemukan
@@ -76,6 +128,7 @@ export default function KatalogInteraktif({ events }: { events: Event[] }) {
             ))}
           </div>
 
+          {/* Tombol Tampilkan Lagi */}
           {batas < tersusun.length && (
             <div className="mt-6 text-center">
               <button
