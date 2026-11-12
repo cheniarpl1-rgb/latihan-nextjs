@@ -1,5 +1,3 @@
-"use server";
-
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { pesanan } from "@/data/pesanan";
