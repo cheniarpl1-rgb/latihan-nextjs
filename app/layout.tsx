@@ -14,10 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className="antialiased">
-      <body className="min-h-screen flex flex-col bg-black text-white">
+      <body className="min-h-screen flex flex-col bg-white text-slate-900">
         <Navbar />
         <main className="flex-1 w-full">{children}</main>
-        <footer className="border-t border-slate-800 bg-black p-4 text-center text-sm text-slate-500">
+        <footer className="border-t border-slate-200 bg-slate-50 p-4 text-center text-sm text-slate-500">
           EventKu &bull; dibuat di kelas XII RPL 1
         </footer>
       </body>

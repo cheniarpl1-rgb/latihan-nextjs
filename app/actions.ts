@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { pesanan } from "@/data/pesanan";
+import { events } from "@/data/events";
 
 export type HasilPesanan = {
   berhasil: boolean;
@@ -67,4 +69,20 @@ export async function pesanTiket(
     galat: {},
     isian: { nama: "", email: "" },
   };
+}
+
+export async function batalkanPesanan(formData: FormData) {
+  const nomor = Number(formData.get("nomor"));
+  const namaSaya = (await cookies()).get("nama")?.value;
+  const i = pesanan.findIndex((p) => p.nomor === nomor);
+
+  if (i === -1 || pesanan[i].nama !== namaSaya) return;
+
+  const [batal] = pesanan.splice(i, 1);
+  const event = events.find((e) => e.id === batal.eventId);
+  if (event) event.terisi -= batal.jumlah;
+
+  revalidatePath("/event");
+  revalidatePath(`/event/${batal.eventId}`);
+  revalidatePath("/pesanan");
 }
