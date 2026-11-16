@@ -31,7 +31,7 @@ export const events: Event[] = [
     harga: 25000,
     kuota: 150,
     terisi: 54,
-    gambar: "/img/event-2.png",
+    gambar: "/img/event-3.png",
   },
   {
     id: 3,
@@ -42,11 +42,11 @@ export const events: Event[] = [
     harga: 10000,
     kuota: 50,
     terisi: 10,
-    gambar: "/img/event-3.png",
+    gambar: "/img/event-2.png",
   },
   {
     id: 4,
-    judul: "Pameran Karya Seni Digital",
+    judul: "Bazar Karya Siswa",
     kategori: "Pameran",
     tanggal: "2026-12-01",
     lokasi: "Galeri Seni",
@@ -57,8 +57,8 @@ export const events: Event[] = [
   },
   {
     id: 5,
-    judul: "Seminar Karir & Teknologi",
-    kategori: "Seminar",
+    judul: "Pelatihan Desain Poster",
+    kategori: "Pelatihan",
     tanggal: "2026-12-05",
     lokasi: "Auditorium Utama",
     harga: 0,

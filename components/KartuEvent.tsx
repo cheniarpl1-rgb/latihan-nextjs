@@ -10,8 +10,6 @@ export default function KartuEvent({ event }: { event: Event }) {
       <Image
         src={event.gambar ?? "/img/default.png"}
         alt={event.judul}
-        width={400}
-        height={210}
         className="mb-3 rounded-lg object-cover w-full h-48"
       />
 
