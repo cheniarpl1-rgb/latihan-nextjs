@@ -1,22 +1,18 @@
+"use client";
+
 import Link from "next/link";
-import { cookies } from "next/headers";
+import { useEffect, useState } from "react";
 import { events } from "@/data/events";
-import { ambilEvent } from "@/data/ambil";
 
-export default async function HalamanFavorit() {
-  const cookieStore = await cookies();
-  // Ambil daftar ID favorit dari cookies (atau sesuaikan dengan state penyimpanan favoritmu)
-  const favoritCookie = cookieStore.get("favorit")?.value;
-  const daftarId: number[] = favoritCookie
-    ? JSON.parse(favoritCookie)
-    : [1, 2, 3]; // Contoh fallback data ID
+export default function HalamanFavorit() {
+  const [listEvent, setListEvent] = useState<any[]>([]);
 
-  // Ambil data event berdasarkan ID favorit
-  const eventFavorit = await Promise.all(
-    daftarId.map(async (id) => await ambilEvent(id)),
-  );
-
-  const listEvent = eventFavorit.filter(Boolean);
+  useEffect(() => {
+    const favorit = localStorage.getItem("favorit");
+    const daftarId: number[] = favorit ? JSON.parse(favorit) : [1, 2, 3];
+    const data = events.filter((e) => daftarId.includes(e.id));
+    setListEvent(data);
+  }, []);
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
@@ -36,15 +32,14 @@ export default async function HalamanFavorit() {
                 key={event.id}
                 className="group relative bg-white rounded-2xl border border-slate-200/80 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col justify-between"
               >
-                {/* Garis Aksen Gradasi */}
                 <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600" />
 
                 <div className="p-5 space-y-3.5">
                   <div className="flex items-center justify-between">
-                    <span className="px-3 py-1 rounded-lg text-[10px] font-extrabold tracking-wider uppercase bg-blue-50 text-blue-700 border border-blue-100">
+                    <span className="px-3 py-1 rounded-lg text- font-extrabold tracking-wider uppercase bg-blue-50 text-blue-700 border border-blue-100">
                       {event.kategori}
                     </span>
-                    <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
+                    <span className="text- font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
                       📅 {event.tanggal}
                     </span>
                   </div>
@@ -60,7 +55,7 @@ export default async function HalamanFavorit() {
 
                   <div className="pt-3 flex items-center justify-between border-t border-slate-100">
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      <p className="text- font-bold uppercase tracking-wider text-slate-400">
                         Harga Tiket
                       </p>
                       <p className="text-sm font-black text-slate-900 mt-0.5">
@@ -70,7 +65,7 @@ export default async function HalamanFavorit() {
                       </p>
                     </div>
                     <span
-                      className={`text-[11px] font-bold px-2.5 py-1 rounded-lg ${sisa > 0 ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-rose-50 text-rose-700 border border-rose-100"}`}
+                      className={`text- font-bold px-2.5 py-1 rounded-lg ${sisa > 0 ? "bg-emerald-50 text-emerald-700 border border-emerald-100" : "bg-rose-50 text-rose-700 border border-rose-100"}`}
                     >
                       {sisa > 0 ? `Sisa ${sisa} tiket` : "Tiket habis"}
                     </span>
