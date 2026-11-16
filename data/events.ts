@@ -7,6 +7,7 @@ export type Event = {
   harga: number;
   kuota: number;
   terisi: number;
+  gambar?: string;
 };
 
 export const events: Event[] = [
@@ -19,6 +20,7 @@ export const events: Event[] = [
     harga: 50000,
     kuota: 30,
     terisi: 12,
+    gambar: "/img/event-1.png",
   },
   {
     id: 2,
@@ -29,6 +31,7 @@ export const events: Event[] = [
     harga: 25000,
     kuota: 150,
     terisi: 54,
+    gambar: "/img/event-2.png",
   },
   {
     id: 3,
@@ -39,6 +42,7 @@ export const events: Event[] = [
     harga: 10000,
     kuota: 50,
     terisi: 10,
+    gambar: "/img/event-3.png",
   },
   {
     id: 4,
@@ -48,7 +52,8 @@ export const events: Event[] = [
     lokasi: "Galeri Seni",
     harga: 15000,
     kuota: 40,
-    terisi: 40, // Kuota sama dengan terisi = TIKET HABIS
+    terisi: 40,
+    gambar: "/img/event-4.png", // Kuota sama dengan terisi = TIKET HABIS
   },
   {
     id: 5,
@@ -59,6 +64,7 @@ export const events: Event[] = [
     harga: 0,
     kuota: 200,
     terisi: 45,
+    gambar: "/img/event-5.png",
   },
 ];
 
