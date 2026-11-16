@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
@@ -32,6 +33,18 @@ export default async function Detail({
         </Link>
       </div>
 
+      {/* Poster di halaman detail */}
+      <div className="relative mb-4 aspect-[40/21] w-full">
+        <Image
+          src={event.gambar ?? "/img/default.png"}
+          alt={event.judul}
+          fill
+          sizes="(max-width: 1024px) 100vw, 960px"
+          preload
+          className="rounded-lg object-cover"
+        />
+      </div>
+
       {/* Grid Utama: Kombinasi Kartu Warna-Warni & Elegan */}
       <div className="grid gap-6 lg:grid-cols-12 items-start">
         {/* Kolom Kiri: Detail Event dengan Gradasi & Warna Menarik */}
@@ -63,7 +76,7 @@ export default async function Detail({
           {/* Kotak Harga & Ketersediaan Bergaya Kontras */}
           <div className="p-5 rounded-2xl bg-white border border-blue-100 shadow-sm flex items-center justify-between">
             <div>
-              <p className="text-[11px] font-black uppercase tracking-wider text-slate-400">
+              <p className="text- font-black uppercase tracking-wider text-slate-400">
                 Harga Tiket
               </p>
               <p className="text-2xl font-black text-blue-600 mt-0.5">
@@ -71,7 +84,7 @@ export default async function Detail({
               </p>
             </div>
             <div className="text-right">
-              <p className="text-[11px] font-black uppercase tracking-wider text-slate-400">
+              <p className="text- font-black uppercase tracking-wider text-slate-400">
                 Ketersediaan
               </p>
               <p
