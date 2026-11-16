@@ -11,7 +11,7 @@ const poppins = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "EventKu",
+  title: { default: "EventKu", template: "%s · EventKu" },
   description: "Katalog dan pemesanan tiket event sekolah",
 };
 
