@@ -9,21 +9,23 @@ export default function KontrolKatalog({
   daftarKategori: string[];
 }) {
   return (
-    <Form
-      action="/event"
-      className="relative z-10 -mt-2 mb-6 rounded- bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.08)] ring-1 ring-slate-100"
-    >
-      <div className="flex flex-wrap items-center gap-2.5">
+    <Form action="/event" className="relative z-10 mx-auto max-w-3xl">
+      <div className="flex items-center gap-2 rounded-full bg-black/30 p-1.5 shadow-xl ring-1 ring-white/30 backdrop-blur-xl">
         <input
           name="cari"
           defaultValue={s.cari}
           placeholder="🔍 Cari event..."
-          className="min-w- flex-1 rounded-2xl border-2 border-slate-100 bg-slate-50 px-4 py-3 font-medium outline-none focus:border-blue-500 focus:bg-white"
+          className="min-w-0 flex-1 rounded-full bg-transparent px-4 py-2.5 text-sm font-bold text-white placeholder:text-white/70 outline-none"
         />
+        <button className="shrink-0 rounded-full bg-gradient-to-r from-yellow-300 to-orange-400 px-5 py-2.5 text-sm font-black text-black shadow-md">
+          Cari →
+        </button>
+      </div>
+      <div className="mt-3 flex flex-wrap justify-center gap-2">
         <select
           name="kategori"
           defaultValue={s.kategori}
-          className="rounded-2xl border-2 border-slate-100 bg-slate-50 px-3 py-3 font-bold"
+          className="rounded-full bg-[#4A3FA0] px-4 py-2 text-sm font-bold text-white shadow-md outline-none ring-1 ring-white/40 [&>option]:text-black"
         >
           {daftarKategori.map((k) => (
             <option key={k}>{k}</option>
@@ -32,7 +34,7 @@ export default function KontrolKatalog({
         <select
           name="urut"
           defaultValue={s.urut}
-          className="rounded-2xl border-2 border-slate-100 bg-slate-50 px-3 py-3 font-bold"
+          className="rounded-full bg-[#4A3FA0] px-4 py-2 text-sm font-bold text-white shadow-md outline-none ring-1 ring-white/40 [&>option]:text-black"
         >
           <option value="tanggal">📅 Terdekat</option>
           <option value="murah">💸 Termurah</option>
@@ -44,23 +46,20 @@ export default function KontrolKatalog({
           name="max"
           min={0}
           defaultValue={s.max ?? ""}
-          placeholder="Harga max"
-          className="w-32 rounded-2xl border-2 border-slate-100 bg-slate-50 px-3 py-3"
+          placeholder="Harga maks"
+          className="w-28 rounded-full bg-[#4A3FA0] px-4 py-2 text-sm font-bold text-white placeholder:text-white/70 shadow-md outline-none ring-1 ring-white/40"
         />
-        <button className="rounded-2xl bg-slate-900 px-6 py-3 font-black text-white shadow-lg hover:bg-blue-600">
-          Cari →
-        </button>
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#4A3FA0] px-4 py-2 text-sm font-bold text-white shadow-md ring-1 ring-white/40">
+          <input
+            type="checkbox"
+            name="sisa"
+            value="1"
+            defaultChecked={s.sisa}
+            className="h-4 w-4 accent-yellow-300"
+          />
+          Ada tiket
+        </label>
       </div>
-      <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-sm font-bold text-emerald-700">
-        <input
-          type="checkbox"
-          name="sisa"
-          value="1"
-          defaultChecked={s.sisa}
-          className="h-4 w-4 accent-emerald-600"
-        />
-        ✅ Hanya yang masih ada tiket
-      </label>
     </Form>
   );
 }

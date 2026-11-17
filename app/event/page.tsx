@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ambilEvents } from "@/data/ambil";
 import { rupiah } from "@/data/events";
-import { PER_HALAMAN, bacaSaringan, saringEvents } from "@/data/saring";
+import {
+  PER_HALAMAN,
+  bacaSaringan,
+  saringEvents,
+  alamatHalaman,
+  type Saringan,
+} from "@/data/saring";
 import KontrolKatalog from "@/components/KontrolKatalog";
 import KartuEvent from "@/components/KartuEvent";
 
@@ -23,81 +29,99 @@ export default async function Katalog({ searchParams }: PageProps<"/event">) {
       : Math.round(tersusun.reduce((t, e) => t + e.harga, 0) / tersusun.length);
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6]">
-      {/* HERO ELEGAN */}
-      <div className="border-b border-stone-200 bg-white">
-        <div className="mx-auto max-w-6xl px-5 py-10">
-          <p className="text- font-bold uppercase tracking-[0.3em] text-stone-400">
-            EventKu — Katalog
-          </p>
-          <h1 className="mt-3 max-w-2xl font-serif text-4xl leading-[1.1] font-medium text-stone-900 sm:text-5xl">
-            Acara pilihan,
-            <br />
-            dikurasi untuk kamu.
+    <div className="min-h-screen bg-gradient-to-b from-orange-50 via-pink-50 to-violet-50 text-slate-900">
+      {/* Hero tetap warna-warni tapi latar bawahnya terang */}
+      <div className="bg-gradient-to-r from-violet-600 via-fuchsia-500 to-orange-400 px-5 py-4 text-white">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
+          <h1 className="text-2xl font-black sm:text-3xl">
+            Temukan Event Serumu<span className="text-yellow-300">.</span>{" "}
+            <span className="hidden text-sm font-bold text-white/85 sm:inline">
+              — Workshop, konser, turnamen
+            </span>
           </h1>
-          <p className="mt-4 max-w-xl text- leading-relaxed text-stone-500">
-            Jelajahi workshop, pertunjukan, dan kompetisi terbaik di kampus.
-            Pilih yang paling sesuai dengan minatmu.
+          <p className="text-sm font-bold">
+            <span className="rounded-full bg-black/25 px-3 py-1">
+              {tersusun.length} Event
+            </span>{" "}
+            <span className="rounded-full bg-black/25 px-3 py-1">
+              {totalSisa} Tiket
+            </span>{" "}
+            <span className="rounded-full bg-black/25 px-3 py-1">
+              {rupiah(rataHarga)}
+            </span>
           </p>
-          <div className="mt-7 flex gap-8 border-t border-stone-100 pt-5">
-            <div>
-              <p className="text-xl font-bold text-stone-900">
-                {tersusun.length}{" "}
-                <span className="text-sm font-normal text-stone-400">
-                  Event
-                </span>
-              </p>
-            </div>
-            <div>
-              <p className="text-xl font-bold text-stone-900">
-                {totalSisa}{" "}
-                <span className="text-sm font-normal text-stone-400">
-                  Tiket tersisa
-                </span>
-              </p>
-            </div>
-            <div>
-              <p className="text-xl font-bold text-stone-900">
-                {rupiah(rataHarga)}{" "}
-                <span className="text-sm font-normal text-stone-400">
-                  Rata-rata
-                </span>
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-5 py-8">
+      <div className="mx-auto max-w-6xl px-5 py-5">
         <KontrolKatalog
           key={JSON.stringify(s)}
           s={s}
           daftarKategori={daftarKategori}
         />
-
         {tersusun.length === 0 ? (
-          <div className="rounded-2xl border border-stone-200 bg-white p-12 text-center">
-            <p className="font-serif text-2xl text-stone-800">
-              Tidak ada event yang cocok.
-            </p>
-            <p className="mt-1 text-sm text-stone-500">
-              Coba ubah kata kunci atau atur ulang filter.
-            </p>
+          <div className="mt-6 rounded- bg-white p-10 text-center shadow-sm">
+            <p className="text-2xl font-bold">Gak ketemu 😢</p>
             <Link
               href="/event"
-              className="mt-5 inline-block rounded-full bg-stone-900 px-5 py-2 text-sm font-medium text-white"
+              className="mt-4 inline-block rounded-full bg-slate-900 px-5 py-2 font-bold text-white"
             >
-              Atur ulang filter
+              Reset
             </Link>
           </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {terlihat.map((e) => (
-              <KartuEvent key={e.id} event={e} />
-            ))}
-          </div>
+          <>
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {terlihat.map((e) => (
+                <KartuEvent key={e.id} event={e} />
+              ))}
+            </div>
+            <Halaman s={s} hal={hal} jumlah={jumlahHalaman} />
+          </>
         )}
       </div>
+    </div>
+  );
+}
+
+function Halaman({
+  s,
+  hal,
+  jumlah,
+}: {
+  s: Saringan;
+  hal: number;
+  jumlah: number;
+}) {
+  if (jumlah <= 1) return null;
+  const nomor = Array.from({ length: jumlah }, (_, i) => i + 1);
+  return (
+    <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+      {hal > 1 && (
+        <Link
+          href={alamatHalaman(s, hal - 1)}
+          className="rounded-full bg-white px-4 py-2 text-sm font-bold shadow-sm ring-1 ring-slate-200"
+        >
+          « Sebelumnya
+        </Link>
+      )}
+      {nomor.map((n) => (
+        <Link
+          key={n}
+          href={alamatHalaman(s, n)}
+          className={`rounded-full px-4 py-2 text-sm font-bold ${n === hal ? "bg-gradient-to-r from-fuchsia-500 to-orange-500 text-white shadow-md" : "bg-white shadow-sm ring-1 ring-slate-200"}`}
+        >
+          {n}
+        </Link>
+      ))}
+      {hal < jumlah && (
+        <Link
+          href={alamatHalaman(s, hal + 1)}
+          className="rounded-full bg-white px-4 py-2 text-sm font-bold shadow-sm ring-1 ring-slate-200"
+        >
+          Berikutnya »
+        </Link>
+      )}
     </div>
   );
 }
