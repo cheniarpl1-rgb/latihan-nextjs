@@ -1,59 +1,65 @@
-// data/ambil.ts - FULL, UDAH DIBENERIN IMPORT-NYA
+// data/ambil.ts - FULL, UDAH BENER hitungPesanan-NYA
 import { cache } from "react";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import type { Pesanan } from "@/data/pesanan";
-import { events } from "./events";
+import type { Event } from "@/data/events";
 
-export const ambilEvent = cache(async (id: number) => {
-  const event = events.find((e) => e.id === id);
-  return event ?? null;
+export const ambilEvent = cache(async (id: number): Promise<Event | null> => {
+  const { data } = await supabaseAdmin
+    .from("events")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  return data as Event | null;
 });
 
-export async function ambilSemuaEvent() {
-  return events;
+export async function ambilSemuaEvent(): Promise<Event[]> {
+  const { data } = await supabaseAdmin
+    .from("events")
+    .select("*")
+    .order("id", { ascending: true });
+  return (data ?? []) as Event[];
 }
 
 export async function ambilTerkait(
   kategoriAtauEvent: string | { kategori: string; id: number },
   id?: number,
-) {
+): Promise<Event[]> {
   let kategori: string;
-  let idEvent: number;
+  let idEvent: number | undefined;
+
   if (typeof kategoriAtauEvent === "object") {
     kategori = kategoriAtauEvent.kategori;
     idEvent = kategoriAtauEvent.id;
   } else {
     kategori = kategoriAtauEvent;
-    idEvent = id ?? -1;
+    idEvent = id;
   }
-  return events
-    .filter((e) => e.kategori === kategori && e.id !== idEvent)
-    .slice(0, 3);
+
+  let query = supabaseAdmin.from("events").select("*").eq("kategori", kategori);
+  if (idEvent) query = query.neq("id", idEvent);
+
+  const { data } = await query.limit(3);
+  return (data ?? []) as Event[];
 }
 
-export const ambilEventTerkait = ambilTerkait;
+export async function ambilPesanan(): Promise<Pesanan[]> {
+  const { data } = await supabaseAdmin
+    .from("pesanan")
+    .select("*, events(judul)")
+    .order("nomor", { ascending: false });
+  return (data ?? []) as Pesanan[];
+}
 
 export async function hitungPesanan(eventId: number) {
   const { data } = await supabaseAdmin
     .from("pesanan")
     .select("jumlah")
     .eq("event_id", eventId);
+
   const list = data ?? [];
   return {
     jumlahPesanan: list.length,
-    // INI YANG TADI ERROR - UDAH DIKASIH TIPE BIAR GAK ANY LAGI
-    jumlahTiket: list.reduce(
-      (total: number, p: { jumlah: number | null }) => total + (p.jumlah ?? 0),
-      0,
-    ),
+    jumlahTiket: list.reduce((total, p) => total + (p.jumlah ?? 0), 0),
   };
-}
-
-export async function ambilPesanan(): Promise<Pesanan[]> {
-  const { data, error } = await supabaseAdmin
-    .from("pesanan")
-    .select("*, events(judul)")
-    .order("nomor", { ascending: false });
-  if (error) throw new Error("Gagal memuat pesanan: " + error.message);
-  return data as Pesanan[];
 }
