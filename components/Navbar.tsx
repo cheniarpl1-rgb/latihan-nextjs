@@ -10,6 +10,7 @@ const MENU = [
   { label: "Favorit", href: "/favorit" },
   { label: "Pesanan", href: "/pesanan" },
   { label: "Tentang", href: "/tentang" },
+  { label: "Admin", href: "/admin" },
   { label: "Kontak", href: "/kontak" },
 ];
 
