@@ -1,35 +1,38 @@
 import Link from "next/link";
-import { ambilEvents } from "@/data/ambil";
-import KartuEvent from "@/components/KartuEvent";
 
-export default async function Beranda() {
-  const semua = await ambilEvents();
-  const terdekat = semua.slice(0, 3);
+export default function Beranda() {
   return (
-    <div className="min-h-screen bg-[#EDE6D6] text-[#1A1A1A]">
-      <section className="px-5 py-16 text-center">
-        <span className="inline-block rounded-full border border-[#C9A227]/40 bg-[#C9A227]/10 px-4 py-1.5 text-xs font-bold tracking-widest text-[#8A6D1B]">
+    <div className="min-h-screen bg-[#0F172A] text-white">
+      <section className="mx-auto max-w-3xl px-5 py-24 text-center">
+        <span className="inline-block rounded-full bg-[#14B8A6]/20 px-4 py-1.5 text-xs font-bold tracking-widest text-[#5EEAD4] ring-1 ring-[#14B8A6]/40">
           PORTAL RESMI TIKET & EVENT SEKOLAH
         </span>
-        <h1 className="mx-auto mt-5 max-w-2xl text-4xl font-black leading-tight md:text-5xl">
-          Temukan event seru di sekolahmu
+        <h1 className="mt-6 text-4xl font-black leading-tight md:text-6xl">
+          Temukan event seru di{" "}
+          <span className="text-[#FB7185]">sekolahmu</span>
         </h1>
-        <p className="mt-3 text-[#555555]">
+        <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">
           Workshop, lomba, musik, dan bazar. Pesan tiketnya di sini.
         </p>
         <Link
           href="/event"
-          className="mt-6 inline-block rounded-full bg-[#1A1A1A] px-6 py-3 font-bold text-white shadow-lg"
+          className="mt-8 inline-block rounded-full bg-[#FBBF24] px-7 py-3.5 font-bold text-[#0F172A]"
         >
-          Lihat semua event
+          Lihat semua event →
         </Link>
-      </section>
-      <section className="mx-auto max-w-6xl px-5 pb-16">
-        <h2 className="mb-3 text-xl font-semibold">Event terdekat</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {terdekat.map((e) => (
-            <KartuEvent key={e.id} event={e} />
-          ))}
+        <div className="mx-auto mt-14 grid max-w-xl grid-cols-3 gap-3">
+          <div className="rounded-2xl bg-[#14B8A6]/15 p-4 ring-1 ring-[#14B8A6]/30">
+            <p className="text-2xl font-black text-[#5EEAD4]">6+</p>
+            <p className="text-xs text-slate-300">Event Aktif</p>
+          </div>
+          <div className="rounded-2xl bg-[#FB7185]/15 p-4 ring-1 ring-[#FB7185]/30">
+            <p className="text-2xl font-black text-[#FDA4AF]">4</p>
+            <p className="text-xs text-slate-300">Kategori</p>
+          </div>
+          <div className="rounded-2xl bg-[#FBBF24]/15 p-4 ring-1 ring-[#FBBF24]/30">
+            <p className="text-2xl font-black text-[#FDE68A]">100%</p>
+            <p className="text-xs text-slate-300">Online</p>
+          </div>
         </div>
       </section>
     </div>
