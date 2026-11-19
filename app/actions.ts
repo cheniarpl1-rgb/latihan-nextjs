@@ -1,88 +1,132 @@
-// app/actions.ts - FULL MISI 22
+// app/actions.ts - FULL LANGKAH 3 - Server Action: simpan pesanan
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
+import { ambilEvent } from "@/data/ambil";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
-export async function simpanPesanan(formData: FormData) {
-  const event_id = Number(formData.get("event_id"));
+export type HasilPesan = {
+  berhasil: boolean;
+  pesan: string;
+  galat: { nama?: string; email?: string; jumlah?: string };
+  isian: { nama: string; email: string };
+};
+
+export async function pesanTiket(
+  _sebelum: HasilPesan,
+  formData: FormData,
+): Promise<HasilPesan> {
+  const eventId = Number(formData.get("eventId"));
   const nama = String(formData.get("nama") ?? "").trim();
-  const email = String(formData.get("email") ?? "")
-    .trim()
-    .toLowerCase();
-  const jumlah = Number(formData.get("jumlah") ?? 1);
+  const email = String(formData.get("email") ?? "").trim();
+  const jumlah = Number(formData.get("jumlah"));
+  const isian = { nama, email };
 
-  if (!event_id || !nama || !email || jumlah < 1) return;
+  // jangan percaya browser: baca event dari database, bukan dari formulir
+  const event = await ambilEvent(eventId);
+  if (!event) {
+    return {
+      berhasil: false,
+      pesan: "Event tidak ditemukan.",
+      galat: {},
+      isian,
+    };
+  }
 
-  // 1. Ambil event buat tau harga & sisa kuota
-  const { data: event } = await supabaseAdmin
-    .from("events")
-    .select("harga, kuota, terisi")
-    .eq("id", event_id)
+  const sisa = event.kuota - event.terisi;
+
+  const galat: HasilPesan["galat"] = {};
+  if (nama.length < 3) galat.nama = "Nama minimal 3 huruf.";
+  else if (nama.length > 40) galat.nama = "Nama maksimal 40 huruf.";
+  if (!email.includes("@")) galat.email = "Email harus memuat tanda @.";
+  if (!Number.isInteger(jumlah) || jumlah < 1)
+    galat.jumlah = "Jumlah tiket minimal 1.";
+  else if (jumlah > 5) galat.jumlah = "Maksimal 5 tiket per pesanan.";
+  else if (jumlah > sisa) galat.jumlah = `Sisa tiket hanya ${sisa}.`;
+
+  if (Object.keys(galat).length > 0) {
+    return {
+      berhasil: false,
+      pesan: "Periksa lagi isian yang merah.",
+      galat,
+      isian,
+    };
+  }
+
+  const { data: baru, error } = await supabaseAdmin
+    .from("pesanan")
+    .insert({
+      event_id: eventId,
+      nama,
+      email,
+      jumlah,
+      total: event.harga * jumlah,
+    })
+    .select("nomor")
     .single();
-  if (!event) return;
-  if ((event.terisi ?? 0) + jumlah > (event.kuota ?? 0)) return;
+  if (error) {
+    return {
+      berhasil: false,
+      pesan: "Pesanan gagal disimpan. Coba lagi.",
+      galat: {},
+      isian,
+    };
+  }
 
-  // 2. Simpan ke tabel pesanan
-  const { error } = await supabaseAdmin.from("pesanan").insert({
-    event_id,
-    nama,
-    email,
-    jumlah,
-    total: event.harga * jumlah,
-  });
-  if (error) throw new Error("Gagal simpan pesanan: " + error.message);
-
-  // 3. Tambah terisi di tabel events
-  await supabaseAdmin
+  const { error: galatKuota } = await supabaseAdmin
     .from("events")
-    .update({ terisi: (event.terisi ?? 0) + jumlah })
-    .eq("id", event_id);
+    .update({ terisi: event.terisi + jumlah })
+    .eq("id", eventId);
+  if (galatKuota) {
+    return {
+      berhasil: false,
+      pesan:
+        "Pesanan tersimpan, tetapi kuota gagal diperbarui. Hubungi panitia.",
+      galat: {},
+      isian,
+    };
+  }
 
-  // 4. Simpan email ke cookie biar tombol Batalkan tau ini pesanan milik siapa
-  const cookieStore = await cookies();
-  cookieStore.set("email", email, { path: "/" });
-  cookieStore.set("nama", nama, { path: "/" });
+  const toples = await cookies();
+  toples.set("nama", nama, { maxAge: 60 * 60 * 24 * 30 });
 
+  revalidatePath("/event");
+  revalidatePath(`/event/${eventId}`);
   revalidatePath("/pesanan");
-  revalidatePath(`/event/${event_id}`);
-  redirect("/pesanan");
+
+  return {
+    berhasil: true,
+    pesan: `Pesanan #${baru.nomor} tersimpan: ${jumlah} tiket untuk ${nama}.`,
+    galat: {},
+    isian: { nama, email: "" },
+  };
 }
 
 export async function batalkanPesanan(formData: FormData) {
   const nomor = Number(formData.get("nomor"));
-  const email = String(formData.get("email") ?? "")
-    .trim()
-    .toLowerCase();
-  if (!nomor || !email) return;
+  const namaSaya = (await cookies()).get("nama")?.value;
+  if (!Number.isInteger(nomor) || !namaSaya) return;
 
-  // 1. Ambil pesanan-nya dulu, cuma boleh batalin punya sendiri (email sama)
-  const { data: pesanan } = await supabaseAdmin
+  // syarat kepemilikan ikut dalam perintah hapus: pesanan orang lain tidak akan terhapus
+  const { data: batal } = await supabaseAdmin
     .from("pesanan")
-    .select("event_id, jumlah")
+    .delete()
     .eq("nomor", nomor)
-    .eq("email", email)
-    .single();
-  if (!pesanan) return;
+    .eq("nama", namaSaya)
+    .select()
+    .maybeSingle();
+  if (!batal) return;
 
-  // 2. Hapus dari tabel pesanan
-  await supabaseAdmin.from("pesanan").delete().eq("nomor", nomor);
-
-  // 3. Kembalikan kuota: kurangi terisi di events
-  const { data: event } = await supabaseAdmin
-    .from("events")
-    .select("terisi")
-    .eq("id", pesanan.event_id)
-    .single();
+  const event = await ambilEvent(batal.event_id);
   if (event) {
     await supabaseAdmin
       .from("events")
-      .update({ terisi: Math.max(0, (event.terisi ?? 0) - pesanan.jumlah) })
-      .eq("id", pesanan.event_id);
+      .update({ terisi: Math.max(0, event.terisi - batal.jumlah) })
+      .eq("id", batal.event_id);
   }
 
+  revalidatePath("/event");
+  revalidatePath(`/event/${batal.event_id}`);
   revalidatePath("/pesanan");
-  revalidatePath(`/event/${pesanan.event_id}`);
 }
