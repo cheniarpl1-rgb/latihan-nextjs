@@ -6,7 +6,7 @@ export default async function Beranda() {
   const semua = await ambilEvents();
   const terdekat = semua.slice(0, 3);
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-[#1A1A1A]">
+    <div className="min-h-screen bg-[#EDE6D6] text-[#1A1A1A]">
       <section className="px-5 py-16 text-center">
         <span className="inline-block rounded-full border border-[#C9A227]/40 bg-[#C9A227]/10 px-4 py-1.5 text-xs font-bold tracking-widest text-[#8A6D1B]">
           PORTAL RESMI TIKET & EVENT SEKOLAH
@@ -24,7 +24,6 @@ export default async function Beranda() {
           Lihat semua event
         </Link>
       </section>
-
       <section className="mx-auto max-w-6xl px-5 pb-16">
         <h2 className="mb-3 text-xl font-semibold">Event terdekat</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
