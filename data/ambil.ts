@@ -1,6 +1,7 @@
-// data/ambil.ts - FULL LANGKAH 10 SELESAI
+// data/ambil.ts - FULL, UDAH DIBENERIN IMPORT-NYA
 import { cache } from "react";
-import { cookies } from "next/headers";
+import { supabaseAdmin } from "@/lib/supabase-admin";
+import type { Pesanan } from "@/data/pesanan";
 import { events } from "./events";
 
 export const ambilEvent = cache(async (id: number) => {
@@ -32,21 +33,27 @@ export async function ambilTerkait(
 
 export const ambilEventTerkait = ambilTerkait;
 
-// INI YANG BENER-BENER NGITUNG DARI DATA PESANAN
 export async function hitungPesanan(eventId: number) {
-  const cookieStore = await cookies();
-  const raw = cookieStore.get("pesanan")?.value ?? "[]";
-  let list: { eventId: number; jumlah: number }[] = [];
-  try {
-    list = JSON.parse(decodeURIComponent(raw));
-  } catch {
-    list = [];
-  }
-  const untukEventIni = list.filter((p) => p.eventId === eventId);
+  const { data } = await supabaseAdmin
+    .from("pesanan")
+    .select("jumlah")
+    .eq("event_id", eventId);
+  const list = data ?? [];
   return {
-    // jumlahPesanan = berapa baris pesanan
-    jumlahPesanan: untukEventIni.length,
-    // jumlahTiket = jumlahkan semua kolom jumlah
-    jumlahTiket: untukEventIni.reduce((total, p) => total + (p.jumlah ?? 0), 0),
+    jumlahPesanan: list.length,
+    // INI YANG TADI ERROR - UDAH DIKASIH TIPE BIAR GAK ANY LAGI
+    jumlahTiket: list.reduce(
+      (total: number, p: { jumlah: number | null }) => total + (p.jumlah ?? 0),
+      0,
+    ),
   };
+}
+
+export async function ambilPesanan(): Promise<Pesanan[]> {
+  const { data, error } = await supabaseAdmin
+    .from("pesanan")
+    .select("*, events(judul)")
+    .order("nomor", { ascending: false });
+  if (error) throw new Error("Gagal memuat pesanan: " + error.message);
+  return data as Pesanan[];
 }
