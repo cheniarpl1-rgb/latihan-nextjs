@@ -1,45 +1,52 @@
-import { supabase } from "@/lib/supabase";
-import { supabaseAdmin } from "@/lib/supabase-admin";
-import type { Event } from "@/data/events";
+// data/ambil.ts - FULL LANGKAH 10 SELESAI
+import { cache } from "react";
+import { cookies } from "next/headers";
+import { events } from "./events";
 
-export async function ambilEvents(): Promise<Event[]> {
-  const { data, error } = await supabase
-    .from("events")
-    .select("*")
-    .order("tanggal");
-  if (error) throw new Error("Gagal memuat event: " + error.message);
-  return data as Event[];
+export const ambilEvent = cache(async (id: number) => {
+  const event = events.find((e) => e.id === id);
+  return event ?? null;
+});
+
+export async function ambilSemuaEvent() {
+  return events;
 }
 
-export async function ambilEvent(id: number): Promise<Event | null> {
-  // Isi URL bisa apa saja (misalnya /event/abc). Periksa dulu sebelum bertanya ke database.
-  if (!Number.isInteger(id)) return null;
-  const { data, error } = await supabase
-    .from("events")
-    .select("*")
-    .eq("id", id)
-    .single();
-  if (error) throw new Error("Gagal memuat event: " + error.message);
-  return data as Event | null;
+export async function ambilTerkait(
+  kategoriAtauEvent: string | { kategori: string; id: number },
+  id?: number,
+) {
+  let kategori: string;
+  let idEvent: number;
+  if (typeof kategoriAtauEvent === "object") {
+    kategori = kategoriAtauEvent.kategori;
+    idEvent = kategoriAtauEvent.id;
+  } else {
+    kategori = kategoriAtauEvent;
+    idEvent = id ?? -1;
+  }
+  return events
+    .filter((e) => e.kategori === kategori && e.id !== idEvent)
+    .slice(0, 3);
 }
 
-export async function ambilTerkait(event: Event): Promise<Event[]> {
-  const { data, error } = await supabase
-    .from("events")
-    .select("*")
-    .eq("kategori", event.kategori)
-    .neq("id", event.id)
-    .order("tanggal");
-  if (error) throw new Error("Gagal memuat event terkait: " + error.message);
-  return data as Event[];
-}
+export const ambilEventTerkait = ambilTerkait;
 
-// Pesanan berisi nama dan email orang, jadi dibaca memakai kunci rahasia (hanya di server).
-export async function hitungPesanan(eventId: number): Promise<number> {
-  const { count, error } = await supabaseAdmin
-    .from("pesanan")
-    .select("*", { count: "exact", head: true })
-    .eq("event_id", eventId);
-  if (error) throw new Error("Gagal menghitung pesanan: " + error.message);
-  return count ?? 0;
+// INI YANG BENER-BENER NGITUNG DARI DATA PESANAN
+export async function hitungPesanan(eventId: number) {
+  const cookieStore = await cookies();
+  const raw = cookieStore.get("pesanan")?.value ?? "[]";
+  let list: { eventId: number; jumlah: number }[] = [];
+  try {
+    list = JSON.parse(decodeURIComponent(raw));
+  } catch {
+    list = [];
+  }
+  const untukEventIni = list.filter((p) => p.eventId === eventId);
+  return {
+    // jumlahPesanan = berapa baris pesanan
+    jumlahPesanan: untukEventIni.length,
+    // jumlahTiket = jumlahkan semua kolom jumlah
+    jumlahTiket: untukEventIni.reduce((total, p) => total + (p.jumlah ?? 0), 0),
+  };
 }

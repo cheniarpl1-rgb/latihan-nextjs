@@ -1,3 +1,4 @@
+// app/event/[id]/page.tsx - FULL LANGKAH 10
 import { Suspense } from "react";
 import Image from "next/image";
 import type { Metadata } from "next";
@@ -9,9 +10,11 @@ import FormPesan from "@/components/FormPesan";
 import TombolFavorit from "@/components/TombolFavorit";
 import EventTerkait from "@/components/EventTerkait";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/event/[id]">): Promise<Metadata> {
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const event = await ambilEvent(Number(id));
   if (!event) return { title: "Event tidak ditemukan" };
@@ -21,14 +24,16 @@ export async function generateMetadata({
   };
 }
 
-export default async function Detail({ params }: PageProps<"/event/[id]">) {
+export default async function Detail({ params }: Props) {
   const { id } = await params;
   const event = await ambilEvent(Number(id));
   if (!event) notFound();
 
-  const jumlahPesanan = await hitungPesanan(event.id);
-  const sisa = event.kuota - event.terisi;
+  // SEKARANG NGANMBIL 2 ANGKA SEKALIGUS
+  const { jumlahPesanan, jumlahTiket } = await hitungPesanan(event.id);
+  const sisa = (event.kuota ?? 0) - (event.terisi ?? 0);
   const namaAwal = (await cookies()).get("nama")?.value ?? "";
+
   return (
     <article className="min-h-screen bg-[#0F172A] px-5 py-10 text-white">
       <div className="mx-auto max-w-3xl rounded-3xl bg-gradient-to-b from-[#1E293B] to-[#0F172A] p-6 ring-1 ring-white/10">
@@ -38,7 +43,7 @@ export default async function Detail({ params }: PageProps<"/event/[id]">) {
             alt={event.judul}
             fill
             sizes="(max-width: 1024px) 100vw, 960px"
-            preload
+            priority
             className="rounded-lg object-cover"
           />
         </div>
@@ -55,8 +60,10 @@ export default async function Detail({ params }: PageProps<"/event/[id]">) {
         <p className="text-slate-300">
           Sisa {sisa} dari {event.kuota} tiket
         </p>
+        {/* INI TAMPILAN BARU LANGKAH 10 */}
         <p className="text-sm text-slate-400">
-          {jumlahPesanan} pesanan masuk lewat EventKu
+          {jumlahPesanan} pesanan masuk lewat EventKu • {jumlahTiket} tiket
+          dipesan
         </p>
         <TombolFavorit id={event.id} />
         <FormPesan event={event} namaAwal={namaAwal} />

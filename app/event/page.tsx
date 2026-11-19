@@ -44,7 +44,8 @@ export default async function EventPage() {
     .order("tanggal");
 
   return (
-    <div className="min-h-screen bg-[#0F172A] px-5 py-10 text-white">
+    // HALAMAN BALIK LAGI KE HITAM GELAP KAYAK AWAL
+    <div className="min-h-screen bg-[#090B12] px-5 py-10 text-white">
       <h1 className="mx-auto max-w-6xl text-4xl font-black">
         Semua <span className="text-[#FBBF24]">Event</span>
       </h1>
