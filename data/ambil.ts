@@ -18,7 +18,7 @@ export async function ambilEvent(id: number): Promise<Event | null> {
     .from("events")
     .select("*")
     .eq("id", id)
-    .maybeSingle();
+    .single();
   if (error) throw new Error("Gagal memuat event: " + error.message);
   return data as Event | null;
 }
