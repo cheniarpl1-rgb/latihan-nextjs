@@ -1,46 +1,60 @@
+// components/Navbar.tsx - FULL, DESAIN SAMA KAYAK LAYOUT LAMA KAMU
 "use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+const MENU = [
+  { label: "Beranda", href: "/" },
+  { label: "Event", href: "/event" },
+  { label: "Favorit", href: "/favorit" },
+  { label: "Pesanan", href: "/pesanan" },
+  { label: "Tentang", href: "/tentang" },
+  { label: "Kontak", href: "/kontak" },
+];
+
 export default function Navbar() {
-  const path = usePathname();
-  const aktif = (href: string) =>
-    path === href
-      ? "rounded-full bg-[#FB7185] px-5 py-2.5 text-white shadow-lg shadow-rose-500/40"
-      : "rounded-full px-4 py-2.5 text-slate-200 hover:bg-white/10 hover:text-white";
+  const pathname = usePathname();
+
+  const isAktif = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(href + "/");
+  };
 
   return (
-    <nav className="sticky top-0 z-50 flex items-center justify-between bg-[#0F172A]/95 px-6 py-3 border-b border-white/10 backdrop-blur">
-      <Link href="/" className="text-3xl font-black tracking-tight">
-        <span className="text-[#FBBF24]">Event</span>
-        <span className="text-[#5EEAD4]">Ku</span>
-      </Link>
-      <div className="flex items-center gap-2 rounded-full bg-white/5 p-1.5 text- font-bold ring-1 ring-white/10">
-        <Link href="/" className={aktif("/")}>
-          Beranda
+    <header className="sticky top-0 z-50 border-b-2 border-[#FBBF24]/30 bg-[#334155] shadow-[0_10px_30px_rgba(0,0,0,0.6)]">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+        {/* Logo */}
+        <Link href="/" className="text-3xl font-black tracking-tight">
+          <span className="text-[#FBBF24]">Event</span>
+          <span className="text-[#2DD4BF]">Ku</span>
         </Link>
-        <Link href="/event" className={aktif("/event")}>
-          Event
-        </Link>
-        <Link href="/favorit" className={aktif("/favorit")}>
-          Favorit
-        </Link>
-        <Link href="/pesanan" className={aktif("/pesanan")}>
-          Pesanan
-        </Link>
-        <Link href="/tentang" className={aktif("/tentang")}>
-          Tentang
-        </Link>
-        <Link href="/kontak" className={aktif("/kontak")}>
-          Kontak
+
+        {/* Menu Tengah - INI YANG UDAH DIBENERIN */}
+        <nav className="flex items-center gap-1 rounded-full bg-black/30 p-1.5 ring-1 ring-white/20">
+          {MENU.map((m) => (
+            <Link
+              key={m.href}
+              href={m.href}
+              className={
+                isAktif(m.href)
+                  ? "rounded-full bg-[#FB7185] px-4 py-2 text-sm font-black text-white shadow-lg shadow-[#FB7185]/30"
+                  : "rounded-full px-4 py-2 text-sm font-bold text-slate-200 hover:text-white"
+              }
+            >
+              {m.label}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Tombol Kanan */}
+        <Link
+          href="/event"
+          className="rounded-full bg-[#FBBF24] px-4 py-2.5 text-sm font-black text-slate-900 shadow-lg shadow-[#FBBF24]/30 transition hover:-translate-y-0.5"
+        >
+          Cari Event →
         </Link>
       </div>
-      <Link
-        href="/event"
-        className="rounded-full bg-[#FBBF24] px-5 py-2.5 text-sm font-black text-[#0F172A] shadow-lg shadow-amber-500/30"
-      >
-        Cari Event →
-      </Link>
-    </nav>
+    </header>
   );
 }
