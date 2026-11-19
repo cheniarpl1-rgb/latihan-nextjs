@@ -1,11 +1,14 @@
-export default function MemuatKatalog() {
+export default function Loading() {
   return (
-    <div>
-      <div className="mb-4 h-8 w-48 animate-pulse rounded bg-slate-200" />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="h-44 animate-pulse rounded-xl bg-slate-200" />
-        ))}
+    <div className="min-h-screen bg-[#2e2763] px-6 py-10">
+      <div className="max-w-6xl mx-auto">
+        <div className="h-6 w-48 bg-white/20 rounded-full animate-pulse mb-4" />
+        <div className="h-12 w-72 bg-white/20 rounded-2xl animate-pulse mb-10" />
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="h- bg-white/15 rounded-3xl animate-pulse" />
+          ))}
+        </div>
       </div>
     </div>
   );

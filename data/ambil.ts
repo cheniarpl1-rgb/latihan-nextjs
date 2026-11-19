@@ -1,4 +1,4 @@
-// data/ambil.ts - FULL, UDAH BENER hitungPesanan-NYA
+// data/ambil.ts - FULL, UDAH ADA buatPesanan BUAT LANGKAH 10
 import { cache } from "react";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import type { Pesanan } from "@/data/pesanan";
@@ -62,4 +62,41 @@ export async function hitungPesanan(eventId: number) {
     jumlahPesanan: list.length,
     jumlahTiket: list.reduce((total, p) => total + (p.jumlah ?? 0), 0),
   };
+}
+
+// ===== LANGKAH 10 - NOMOR 1: PERKECIL CELAH =====
+export async function buatPesanan(opts: {
+  event: Event;
+  nama: string;
+  email: string;
+  jumlah: number;
+}): Promise<{ ok: boolean; pesan: string }> {
+  const { event, nama, email, jumlah } = opts;
+
+  // 1. Update terisi, TAPI cuma kalau terisi-nya masih sama kayak awal
+  const { data: updateData, error: updateError } = await supabaseAdmin
+    .from("events")
+    .update({ terisi: (event.terisi ?? 0) + jumlah })
+    .eq("id", event.id)
+    .eq("terisi", event.terisi ?? 0)
+    .select();
+
+  // 2. Kalau gak ada baris yang ke-update, berarti udah direbut orang lain
+  if (updateError || !updateData || updateData.length === 0) {
+    return { ok: false, pesan: "Tiket baru saja berubah, coba lagi." };
+  }
+
+  // 3. Baru simpan pesanannya kalau update-nya berhasil
+  const { error: pesanError } = await supabaseAdmin.from("pesanan").insert({
+    event_id: event.id,
+    nama,
+    email,
+    jumlah,
+  });
+
+  if (pesanError) {
+    return { ok: false, pesan: "Gagal menyimpan pesanan, coba lagi." };
+  }
+
+  return { ok: true, pesan: "Pesanan berhasil!" };
 }
