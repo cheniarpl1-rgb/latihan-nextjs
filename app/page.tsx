@@ -2,51 +2,110 @@ import Link from "next/link";
 
 export default function Beranda() {
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#2e2763] via-[#24365e] to-[#3d2158] text-white">
-      {/* BACKGROUND - SAMA PERSIS KAYAK HALAMAN EVENT */}
-      <div className="absolute top-0 left-0 w-full h- bg-gradient-to-b from-fuchsia-500/25 via-violet-500/15 to-transparent" />
-      <div className="absolute -top-20 -left-20 w- h- bg-fuchsia-400/30 rounded-full blur-" />
-      <div className="absolute top-[30%] -right-24 w- h- bg-amber-400/25 rounded-full blur-" />
-      <div className="absolute bottom-[-100px] left-[30%] w- h- bg-cyan-400/25 rounded-full blur-" />
-      <div className="absolute bottom-[20%] left-[5%] w- h- bg-pink-400/20 rounded-full blur-" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.12)_1px,transparent_0)] bg-[size:26px_26px]" />
-
-      {/* ISI BERANDA - GAK DIRUBAH */}
-      <div className="relative max-w-6xl mx-auto px-6 py-16 text-center">
-        <p className="inline-block px-4 py-1.5 rounded-full bg-teal-500/20 text-teal-300 text-xs font-bold tracking-widest border border-teal-400/30">
-          PORTAL RESMI TIKET & EVENT SEKOLAH
-        </p>
-        <h1 className="text-5xl md:text-6xl font-black leading-tight mt-6">
-          Temukan event seru di
-          <br />
-          <span className="text-rose-400">sekolahmu</span>
-        </h1>
-        <p className="text-slate-300 mt-4">
-          Workshop, lomba, musik, dan bazar. Pesan tiketnya di sini.
-        </p>
-
-        <Link
-          href="/event"
-          className="inline-block mt-8 bg-amber-400 text-black px-7 py-3.5 rounded-full font-bold hover:bg-amber-300 transition"
+    <>
+      {/* TULISAN PEMBUKA */}
+      <div style={{ textAlign: "center", paddingTop: 50, paddingBottom: 20 }}>
+        <span
+          style={{
+            background: "#CCFBF1",
+            color: "#0F766E",
+            padding: "8px 18px",
+            borderRadius: 999,
+            fontWeight: 700,
+            fontSize: 13,
+          }}
         >
-          Lihat semua event →
-        </Link>
+          ✨ PORTAL RESMI TIKET & EVENT SEKOLAH
+        </span>
 
-        <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto mt-12">
-          <div className="rounded-2xl bg-teal-500/20 border border-teal-400/20 py-4">
-            <p className="text-2xl font-black text-teal-300">6+</p>
-            <p className="text-sm text-slate-300">Event Aktif</p>
-          </div>
-          <div className="rounded-2xl bg-pink-500/20 border border-pink-400/20 py-4">
-            <p className="text-2xl font-black text-pink-300">4</p>
-            <p className="text-sm text-slate-300">Kategori</p>
-          </div>
-          <div className="rounded-2xl bg-amber-500/20 border border-amber-400/20 py-4">
-            <p className="text-2xl font-black text-amber-300">100%</p>
-            <p className="text-sm text-slate-300">Online</p>
-          </div>
+        <h1
+          style={{
+            fontSize: 52,
+            fontWeight: 900,
+            lineHeight: 1.1,
+            color: "#1E1B4B",
+            marginTop: 20,
+          }}
+        >
+          Temukan event seru
+          <br />
+          di <span style={{ color: "#EC4899" }}>sekolahmu</span> 🎉
+        </h1>
+
+        <p
+          style={{
+            color: "#64748B",
+            fontSize: 18,
+            maxWidth: 600,
+            margin: "16px auto",
+          }}
+        >
+          Workshop, lomba, musik, dan bazar. Semua bisa dipesan online, cepat
+          dan gampang. Yuk cari event favoritmu di menu Event!
+        </p>
+
+        <div
+          style={{
+            display: "flex",
+            gap: 12,
+            justifyContent: "center",
+            marginTop: 24,
+          }}
+        >
+          <Link
+            href="/event"
+            style={{
+              background: "#FBBF24",
+              color: "#1E1B4B",
+              padding: "13px 26px",
+              borderRadius: 999,
+              fontWeight: 800,
+              textDecoration: "none",
+            }}
+          >
+            Lihat Semua Event →
+          </Link>
+          <Link
+            href="/tentang"
+            style={{
+              background: "white",
+              color: "#1E1B4B",
+              padding: "13px 26px",
+              borderRadius: 999,
+              fontWeight: 700,
+              textDecoration: "none",
+              border: "1px solid #E5E7EB",
+            }}
+          >
+            Tentang Kami
+          </Link>
         </div>
       </div>
-    </div>
+
+      {/* TULISAN PENJELASAN, BUKAN KARTU */}
+      <div style={{ maxWidth: 700, margin: "40px auto", textAlign: "center" }}>
+        <h2 style={{ fontSize: 28, fontWeight: 800, color: "#1E1B4B" }}>
+          Kenapa pakai EventKu? 💛
+        </h2>
+        <p
+          style={{
+            color: "#64748B",
+            fontSize: 16,
+            lineHeight: 1.7,
+            marginTop: 12,
+          }}
+        >
+          1. Pesan tiket gak perlu antri, langsung dari HP.
+          <br />
+          2. Info event selalu update, gak ketinggalan lagi.
+          <br />
+          3. Panitia gampang kelola peserta dan tiket.
+        </p>
+        <p style={{ color: "#94A3B8", fontSize: 14, marginTop: 20 }}>
+          👉 Klik menu <b>Event</b> di atas untuk lihat semua kartu event & cari
+          event.
+        </p>
+      </div>
+    </>
   );
 }

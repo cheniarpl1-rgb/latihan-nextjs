@@ -1,100 +1,216 @@
 import Link from "next/link";
-import { ambilSemuaEvent } from "@/data/ambil";
 
-// WARNA KARTU - TETEP, GAK DIRUBAH, UDAH BAGUS
-const warna: Record<string, string> = {
-  Workshop: "from-[#4a9e94] to-[#2f6b62]",
-  Olahraga: "from-[#c96a7e] to-[#9e4458]",
-  Musik: "from-[#d9a441] to-[#b97a1f]",
-  Bazar: "from-[#5b8fd6] to-[#3a5f9e]",
-  Lomba: "from-[#6aaa5e] to-[#41793a]",
-};
+const LIST = [
+  {
+    id: 1,
+    judul: "Workshop React untuk Pemula",
+    kategori: "Workshop",
+    harga: 50000,
+    tanggal: "2026-11-14",
+    lokasi: "Lab RPL",
+    emoji: "💻",
+    bg: "#CCFBF1",
+    chipBg: "#14B8A6",
+  },
+  {
+    id: 2,
+    judul: "Turnamen Futsal Antar Kelas",
+    kategori: "Olahraga",
+    harga: 0,
+    tanggal: "2026-11-20",
+    lokasi: "Lapangan Sekolah",
+    emoji: "⚽",
+    bg: "#FBCFE8",
+    chipBg: "#EC4899",
+  },
+  {
+    id: 3,
+    judul: "Konser Musik Akustik",
+    kategori: "Musik",
+    harga: 25000,
+    tanggal: "2026-11-27",
+    lokasi: "Aula",
+    emoji: "🎵",
+    bg: "#FEF3C7",
+    chipBg: "#F59E0B",
+  },
+  {
+    id: 4,
+    judul: "Bazar Karya Siswa",
+    kategori: "Bazar",
+    harga: 10000,
+    tanggal: "2026-12-03",
+    lokasi: "Halaman Depan",
+    emoji: "🛍️",
+    bg: "#BAE6FD",
+    chipBg: "#0EA5E9",
+  },
+  {
+    id: 5,
+    judul: "Pelatihan Desain Poster",
+    kategori: "Workshop",
+    harga: 30000,
+    tanggal: "2026-12-05",
+    lokasi: "Lab Multimedia",
+    emoji: "🎨",
+    bg: "#DDD6FE",
+    chipBg: "#8B5CF6",
+  },
+  {
+    id: 6,
+    judul: "Lomba Cerdas Cermat",
+    kategori: "Lomba",
+    harga: 0,
+    tanggal: "2026-12-10",
+    lokasi: "Aula",
+    emoji: "🏆",
+    bg: "#D9F99D",
+    chipBg: "#65A30D",
+  },
+];
 
-const badge: Record<string, string> = {
-  Workshop: "bg-white/25 text-white",
-  Olahraga: "bg-white/25 text-white",
-  Musik: "bg-white/25 text-white",
-  Bazar: "bg-white/25 text-white",
-  Lomba: "bg-white/25 text-white",
-};
-
-export default async function EventPage() {
-  const events = await ambilSemuaEvent();
+export default async function Event({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const params = await searchParams;
+  const q = params.q ?? "";
+  const list = q
+    ? LIST.filter((e) => e.judul.toLowerCase().includes(q.toLowerCase()))
+    : LIST;
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#2e2763] via-[#24365e] to-[#3d2158] text-white px-6 py-10">
-      {/* BACKGROUND BARU - LEBIH TERANG & HIDUP */}
-      <div className="absolute top-0 left-0 w-full h- bg-gradient-to-b from-fuchsia-500/25 via-violet-500/15 to-transparent" />
-      <div className="absolute -top-20 -left-20 w- h- bg-fuchsia-400/30 rounded-full blur-" />
-      <div className="absolute top-[30%] -right-24 w- h- bg-amber-400/25 rounded-full blur-" />
-      <div className="absolute bottom-[-100px] left-[30%] w- h- bg-cyan-400/25 rounded-full blur-" />
-      <div className="absolute bottom-[20%] left-[5%] w- h- bg-pink-400/20 rounded-full blur-" />
-      {/* Pola titik biar gak polos */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.12)_1px,transparent_0)] bg-[size:26px_26px]" />
+    <>
+      <h1
+        style={{
+          fontSize: 42,
+          fontWeight: 900,
+          color: "#1E1B4B",
+          marginTop: 36,
+        }}
+      >
+        Semua <span style={{ color: "#EC4899" }}>Event</span> 🎪
+      </h1>
+      <p style={{ color: "#64748B" }}>
+        Pilih event favoritmu, klik kartu untuk detail.
+      </p>
 
-      <div className="max-w-6xl mx-auto relative">
-        <div className="mb-10">
-          <p className="text-fuchsia-300 font-bold tracking-widest text-sm mb-2">
-            ✨ JELAJAHI • PILIH • PESAN
-          </p>
-          <h1 className="text-5xl font-black leading-none drop-shadow-lg">
-            Semua{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-400 to-violet-300">
-              Event
-            </span>
-          </h1>
-          <p className="text-white/70 mt-3">
-            Pilih event favoritmu, klik kartu untuk detail.
-          </p>
-        </div>
+      <form
+        action="/event"
+        style={{
+          display: "flex",
+          background: "white",
+          borderRadius: 999,
+          padding: 6,
+          maxWidth: 520,
+          marginTop: 20,
+          boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+        }}
+      >
+        <input
+          name="q"
+          defaultValue={q}
+          placeholder="Cari workshop, konser..."
+          style={{
+            flex: 1,
+            border: "none",
+            outline: "none",
+            padding: "0 16px",
+            borderRadius: 999,
+          }}
+        />
+        <button
+          style={{
+            background: "#FBBF24",
+            border: "none",
+            padding: "10px 22px",
+            borderRadius: 999,
+            fontWeight: 800,
+          }}
+        >
+          Cari →
+        </button>
+      </form>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((e) => (
-            <Link
-              key={e.id}
-              href={`/event/${e.id}`}
-              className={`group relative overflow-hidden rounded-3xl p-6 min-h- flex flex-col justify-between bg-gradient-to-br ${warna[e.kategori] ?? "from-violet-500 to-fuchsia-600"} shadow-[0_20px_40px_rgba(0,0,0,0.35)] border border-white/20 hover:scale-[1.02] transition-all duration-300`}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+          gap: 20,
+          marginTop: 24,
+        }}
+      >
+        {list.map((e) => (
+          <article
+            key={e.id}
+            style={{
+              background: e.bg,
+              borderRadius: 28,
+              padding: 20,
+              border: "3px solid white",
+              boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+            }}
+          >
+            <div style={{ fontSize: 64, textAlign: "center" }}>{e.emoji}</div>
+            <span
+              style={{
+                background: e.chipBg,
+                color: "white",
+                padding: "6px 14px",
+                borderRadius: 999,
+                fontSize: 12,
+                fontWeight: 700,
+                display: "inline-block",
+                marginTop: 12,
+              }}
             >
-              <div className="relative">
-                <span
-                  className={`inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wide ${badge[e.kategori]}`}
-                >
-                  {e.kategori}
-                </span>
-                <h2 className="text-2xl font-black leading-tight mt-5">
-                  {e.judul}
-                </h2>
-                <p className="text-white/90 text-sm mt-2 font-medium">
-                  📅 {e.tanggal} • 📍 {e.lokasi}
-                </p>
-              </div>
-
-              <div className="relative flex items-center justify-between mt-6 pt-4 border-t border-white/25">
-                <span className="text-2xl font-black">
-                  {e.harga === 0
-                    ? "GRATIS 🎉"
-                    : `Rp ${e.harga.toLocaleString("id-ID")}`}
-                </span>
-                <span className="bg-black/70 text-white px-5 py-2.5 rounded-full text-sm font-bold group-hover:bg-white group-hover:text-black transition">
-                  Lihat →
-                </span>
-              </div>
-
-              <span className="absolute top-4 right-4 text-3xl opacity-80">
-                {e.kategori === "Musik"
-                  ? "🎵"
-                  : e.kategori === "Olahraga"
-                    ? "⚽"
-                    : e.kategori === "Workshop"
-                      ? "💻"
-                      : e.kategori === "Bazar"
-                        ? "🛍️"
-                        : "🏆"}
-              </span>
-            </Link>
-          ))}
-        </div>
+              {e.kategori}
+            </span>
+            <h3
+              style={{
+                fontSize: 20,
+                fontWeight: 800,
+                color: "#1E1B4B",
+                margin: "12px 0 6px",
+              }}
+            >
+              {e.judul}
+            </h3>
+            <p style={{ color: "#475569", fontSize: 14, margin: 0 }}>
+              📅 {e.tanggal} • 📍 {e.lokasi}
+            </p>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: 16,
+              }}
+            >
+              <b>
+                {e.harga === 0
+                  ? "GRATIS 🎉"
+                  : "Rp " + e.harga.toLocaleString("id-ID")}
+              </b>
+              <Link
+                href={"/event/" + e.id}
+                style={{
+                  background: "#1E1B4B",
+                  color: "white",
+                  padding: "8px 16px",
+                  borderRadius: 999,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  textDecoration: "none",
+                }}
+              >
+                Lihat →
+              </Link>
+            </div>
+          </article>
+        ))}
       </div>
-    </div>
+    </>
   );
 }
