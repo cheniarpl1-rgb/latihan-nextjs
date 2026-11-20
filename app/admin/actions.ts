@@ -1,126 +1,72 @@
 "use server";
-import { revalidatePath } from "next/cache";
+
 import { redirect } from "next/navigation";
-import { supabaseAdmin } from "@/lib/supabase-admin";
-import { pastikanAdmin } from "@/lib/sesi";
+import { EVENTS } from "@/data/events";
 
 export type HasilEvent = {
   pesan: string;
-  galat: Partial<
-    Record<
-      "judul" | "kategori" | "tanggal" | "lokasi" | "harga" | "kuota",
-      string
-    >
-  >;
-  isian: Record<string, string>;
+  galat: { [k: string]: string };
+  isian: { [k: string]: string };
 };
 
-function segarkan(id?: number) {
-  revalidatePath("/");
-  revalidatePath("/event");
-  revalidatePath("/admin");
-  if (id) revalidatePath(`/event/${id}`);
-}
-
 export async function simpanEvent(
-  _sebelum: HasilEvent,
-  formData: FormData,
+  _: HasilEvent,
+  form: FormData,
 ): Promise<HasilEvent> {
-  await pastikanAdmin(); // Server Action bisa dipanggil langsung, jadi periksa lagi
-
-  const idTeks = String(formData.get("id") ?? "");
-  const id = idTeks ? Number(idTeks) : null;
-  const isian = {
-    id: idTeks,
-    judul: String(formData.get("judul") ?? "").trim(),
-    kategori: String(formData.get("kategori") ?? "").trim(),
-    tanggal: String(formData.get("tanggal") ?? "").trim(),
-    lokasi: String(formData.get("lokasi") ?? "").trim(),
-    harga: String(formData.get("harga") ?? "").trim(),
-    kuota: String(formData.get("kuota") ?? "").trim(),
-    gambar: String(formData.get("gambar") ?? "").trim(),
+  const isian: { [k: string]: string } = {
+    id: String(form.get("id") ?? ""),
+    judul: String(form.get("judul") ?? ""),
+    kategori: String(form.get("kategori") ?? ""),
+    tanggal: String(form.get("tanggal") ?? ""),
+    lokasi: String(form.get("lokasi") ?? ""),
+    harga: String(form.get("harga") ?? "0"),
+    kuota: String(form.get("kuota") ?? ""),
+    gambar: String(form.get("gambar") ?? ""),
   };
-  const harga = Number(isian.harga);
-  const kuota = Number(isian.kuota);
 
-  const galat: HasilEvent["galat"] = {};
-  if (isian.judul.length < 3 || isian.judul.length > 80)
-    galat.judul = "Judul 3 sampai 80 huruf.";
-  if (isian.kategori.length < 3 || isian.kategori.length > 20)
-    galat.kategori = "Kategori 3 sampai 20 huruf.";
-  if (
-    !/^\d{4}-\d{2}-\d{2}$/.test(isian.tanggal) ||
-    Number.isNaN(Date.parse(isian.tanggal))
-  ) {
-    galat.tanggal = "Tanggal tidak valid.";
-  }
-  if (isian.lokasi.length < 2) galat.lokasi = "Lokasi minimal 2 huruf.";
-  if (
-    isian.harga === "" ||
-    !Number.isInteger(harga) ||
-    harga < 0 ||
-    harga > 1_000_000
-  ) {
-    galat.harga = "Harga 0 sampai 1.000.000 (bilangan bulat).";
-  }
-  if (!Number.isInteger(kuota) || kuota < 1 || kuota > 1000)
-    galat.kuota = "Kuota 1 sampai 1000 (bilangan bulat).";
-
-  // kuota tidak boleh lebih kecil dari tiket yang sudah terisi
-  if (id !== null && !galat.kuota) {
-    const { data } = await supabaseAdmin
-      .from("events")
-      .select("terisi")
-      .eq("id", id)
-      .maybeSingle();
-    if (!data) return { pesan: "Event tidak ditemukan.", galat: {}, isian };
-    if (kuota < data.terisi)
-      galat.kuota = `Kuota tidak boleh di bawah tiket terisi (${data.terisi}).`;
-  }
+  const galat: { [k: string]: string } = {};
+  if (!isian.judul) galat.judul = "Judul wajib diisi";
+  if (!isian.kategori) galat.kategori = "Kategori wajib diisi";
+  if (!isian.tanggal) galat.tanggal = "Tanggal wajib diisi";
+  if (!isian.lokasi) galat.lokasi = "Lokasi wajib diisi";
+  if (!isian.kuota) galat.kuota = "Kuota wajib diisi";
 
   if (Object.keys(galat).length > 0) {
-    return { pesan: "Periksa lagi isian yang merah.", galat, isian };
+    return { pesan: "Masih ada yang salah", galat, isian };
   }
 
-  const baris = {
-    judul: isian.judul,
-    kategori: isian.kategori,
-    tanggal: isian.tanggal,
-    lokasi: isian.lokasi,
-    harga,
-    kuota,
-    gambar: isian.gambar || null,
-  };
-  const { error } =
-    id === null
-      ? await supabaseAdmin.from("events").insert(baris)
-      : await supabaseAdmin.from("events").update(baris).eq("id", id);
-  if (error)
-    return { pesan: "Gagal menyimpan: " + error.message, galat: {}, isian };
-
-  segarkan(id ?? undefined);
-  redirect(
-    "/admin?info=" +
-      encodeURIComponent(
-        id === null ? "Event ditambahkan." : "Perubahan disimpan.",
-      ),
-  );
+  if (isian.id) {
+    const e = EVENTS.find((x) => x.id === Number(isian.id));
+    if (e) {
+      e.judul = isian.judul;
+      e.kategori = isian.kategori;
+      e.tanggal = isian.tanggal;
+      e.lokasi = isian.lokasi;
+      e.harga = Number(isian.harga);
+      e.kuota = Number(isian.kuota);
+      e.gambar = isian.gambar;
+    }
+    redirect("/admin?info=Event berhasil diubah");
+  } else {
+    const idBaru = Math.max(...EVENTS.map((x) => x.id)) + 1;
+    EVENTS.push({
+      id: idBaru,
+      judul: isian.judul,
+      kategori: isian.kategori,
+      tanggal: isian.tanggal,
+      lokasi: isian.lokasi,
+      harga: Number(isian.harga),
+      kuota: Number(isian.kuota),
+      terisi: 0,
+      gambar: isian.gambar,
+    });
+    redirect("/admin?info=Event berhasil ditambah");
+  }
 }
 
-export async function hapusEvent(formData: FormData) {
-  await pastikanAdmin();
-  const id = Number(formData.get("id"));
-  if (!Number.isInteger(id)) redirect("/admin");
-
-  const { error } = await supabaseAdmin.from("events").delete().eq("id", id);
-  if (error) {
-    // 23503 = masih dipakai tabel lain (foreign key): event ini sudah punya pesanan
-    const pesan =
-      error.code === "23503"
-        ? "Event ini sudah punya pesanan, jadi tidak bisa dihapus."
-        : "Gagal menghapus: " + error.message;
-    redirect("/admin?galat=" + encodeURIComponent(pesan));
-  }
-  segarkan(id);
-  redirect("/admin?info=" + encodeURIComponent("Event dihapus."));
+export async function hapusEvent(form: FormData) {
+  const id = Number(form.get("id"));
+  const index = EVENTS.findIndex((x) => x.id === id);
+  if (index !== -1) EVENTS.splice(index, 1);
+  redirect("/admin?info=Event berhasil dihapus");
 }
