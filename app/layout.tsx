@@ -1,21 +1,12 @@
 import "./globals.css";
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const menu = [
-    { label: "Beranda", href: "/", bg: "#CCFBF1" },
-    { label: "Event", href: "/event", bg: "#FBCFE8" },
-    { label: "Favorit", href: "/favorit", bg: "#FEF3C7" },
-    { label: "Pesanan", href: "/pesanan", bg: "#BAE6FD" },
-    { label: "Tentang", href: "/tentang", bg: "#DDD6FE" },
-    { label: "Admin", href: "/admin", bg: "#D9F99D" },
-    { label: "Kontak", href: "/kontak", bg: "#FFEDD5" },
-  ];
-
   return (
     <html lang="id">
       <body
@@ -23,6 +14,9 @@ export default function RootLayout({
           background: "#FFF1E6",
           fontFamily: "Poppins, sans-serif",
           margin: 0,
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <header
@@ -59,28 +53,7 @@ export default function RootLayout({
               <span style={{ color: "#14B8A6" }}>Ku</span>
               <span style={{ color: "#EC4899" }}>.</span>
             </Link>
-
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {menu.map((m) => (
-                <Link
-                  key={m.href}
-                  href={m.href}
-                  style={{
-                    background: m.bg,
-                    color: "#1E1B4B",
-                    padding: "8px 16px",
-                    borderRadius: 999,
-                    fontWeight: 700,
-                    fontSize: 14,
-                    textDecoration: "none",
-                    border: "2px solid white",
-                  }}
-                >
-                  {m.label}
-                </Link>
-              ))}
-            </div>
-
+            <Navbar />
             <Link
               href="/event"
               style={{
@@ -98,31 +71,17 @@ export default function RootLayout({
         </header>
 
         <main
-          style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px 50px" }}
+          style={{
+            maxWidth: 1100,
+            width: "100%",
+            margin: "0 auto",
+            padding: "0 16px 50px",
+            flex: 1,
+          }}
         >
           {children}
         </main>
 
-        <div
-          style={{
-            overflow: "hidden",
-            padding: "12px 0",
-            background: "linear-gradient(to right, #FBBF24, #F472B6, #2DD4BF)",
-            color: "white",
-            fontWeight: 800,
-          }}
-        >
-          <div className="marquee">
-            <span>
-              ✨ WORKSHOP &nbsp; 🎶 MUSIK &nbsp; 🏆 LOMBA &nbsp; 🛍️ BAZAR &nbsp;
-              ⚽ OLAHRAGA &nbsp;
-            </span>
-            <span>
-              ✨ WORKSHOP &nbsp; 🎶 MUSIK &nbsp; 🏆 LOMBA &nbsp; 🛍️ BAZAR &nbsp;
-              ⚽ OLAHRAGA &nbsp;
-            </span>
-          </div>
-        </div>
         <footer
           style={{
             textAlign: "center",
@@ -134,6 +93,32 @@ export default function RootLayout({
         >
           © 2026 EventKu - Portal Event Sekolah 💛
         </footer>
+
+        {/* MARQUEE PALING BAWAH SENDIRI, NEMPEL DI BAWAH LAYAR */}
+        <div
+          style={{
+            overflow: "hidden",
+            padding: "12px 0",
+            background: "linear-gradient(to right, #FBBF24, #F472B6, #2DD4BF)",
+            color: "white",
+            fontWeight: 800,
+            position: "sticky",
+            bottom: 0,
+            zIndex: 50,
+            width: "100%",
+          }}
+        >
+          <div className="marquee">
+            <span>
+              ✨ WORKSHOP &nbsp; 🎶 MUSIK &nbsp; 🏆 LOMBA &nbsp; 🛍 BAZAR &nbsp;
+              ⚽ OLAHRAGA &nbsp;
+            </span>
+            <span>
+              ✨ WORKSHOP &nbsp; 🎶 MUSIK &nbsp; 🏆 LOMBA &nbsp; 🛍 BAZAR &nbsp;
+              ⚽ OLAHRAGA &nbsp;
+            </span>
+          </div>
+        </div>
       </body>
     </html>
   );

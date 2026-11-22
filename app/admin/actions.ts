@@ -1,72 +1,92 @@
 "use server";
-
 import { redirect } from "next/navigation";
-import { EVENTS } from "@/data/events";
+import { revalidatePath } from "next/cache";
 
 export type HasilEvent = {
   pesan: string;
-  galat: { [k: string]: string };
-  isian: { [k: string]: string };
+  galat: Record<string, string>;
+  isian: Record<string, string>;
 };
 
+// Sesuaiin sama data kamu - ini yang dipake Admin page juga
+import { EVENTS } from "@/data/events";
+
+function ambilIsian(form: FormData): Record<string, string> {
+  const o: Record<string, string> = {};
+  form.forEach((v, k) => (o[k] = String(v)));
+  return o;
+}
+
 export async function simpanEvent(
-  _: HasilEvent,
+  _prev: HasilEvent,
   form: FormData,
 ): Promise<HasilEvent> {
-  const isian: { [k: string]: string } = {
-    id: String(form.get("id") ?? ""),
-    judul: String(form.get("judul") ?? ""),
-    kategori: String(form.get("kategori") ?? ""),
-    tanggal: String(form.get("tanggal") ?? ""),
-    lokasi: String(form.get("lokasi") ?? ""),
-    harga: String(form.get("harga") ?? "0"),
-    kuota: String(form.get("kuota") ?? ""),
-    gambar: String(form.get("gambar") ?? ""),
-  };
+  const isian = ambilIsian(form);
+  const galat: Record<string, string> = {};
 
-  const galat: { [k: string]: string } = {};
   if (!isian.judul) galat.judul = "Judul wajib diisi";
   if (!isian.kategori) galat.kategori = "Kategori wajib diisi";
   if (!isian.tanggal) galat.tanggal = "Tanggal wajib diisi";
   if (!isian.lokasi) galat.lokasi = "Lokasi wajib diisi";
   if (!isian.kuota) galat.kuota = "Kuota wajib diisi";
+  if (isian.harga && Number(isian.harga) < 0)
+    galat.harga = "Harga tidak boleh minus";
 
-  if (Object.keys(galat).length > 0) {
-    return { pesan: "Masih ada yang salah", galat, isian };
+  // B: kuota tidak boleh di bawah tiket terisi
+  const lama = EVENTS.find((e: any) => String(e.id) === isian.id);
+  if (lama && isian.kuota && Number(isian.kuota) < Number(lama.terisi || 0)) {
+    galat.kuota = `Kuota tidak boleh kurang dari tiket terisi (${lama.terisi})`;
   }
 
-  if (isian.id) {
-    const e = EVENTS.find((x) => x.id === Number(isian.id));
-    if (e) {
-      e.judul = isian.judul;
-      e.kategori = isian.kategori;
-      e.tanggal = isian.tanggal;
-      e.lokasi = isian.lokasi;
-      e.harga = Number(isian.harga);
-      e.kuota = Number(isian.kuota);
-      e.gambar = isian.gambar;
-    }
-    redirect("/admin?info=Event berhasil diubah");
+  // Kalau ada galat, isian balik lagi, gak hilang
+  if (Object.keys(galat).length > 0) {
+    return { pesan: "", galat, isian };
+  }
+
+  if (lama) {
+    // UBAH
+    lama.judul = isian.judul;
+    lama.kategori = isian.kategori;
+    lama.tanggal = isian.tanggal;
+    lama.lokasi = isian.lokasi;
+    lama.harga = Number(isian.harga || 0);
+    lama.kuota = Number(isian.kuota);
+    lama.gambar = isian.gambar || lama.gambar || "";
   } else {
-    const idBaru = Math.max(...EVENTS.map((x) => x.id)) + 1;
+    // TAMBAH
     EVENTS.push({
-      id: idBaru,
+      id: String(Date.now()),
       judul: isian.judul,
       kategori: isian.kategori,
       tanggal: isian.tanggal,
       lokasi: isian.lokasi,
-      harga: Number(isian.harga),
+      harga: Number(isian.harga || 0),
       kuota: Number(isian.kuota),
       terisi: 0,
-      gambar: isian.gambar,
-    });
-    redirect("/admin?info=Event berhasil ditambah");
+      gambar: isian.gambar || "",
+    } as any);
   }
+
+  revalidatePath("/");
+  revalidatePath("/event");
+  revalidatePath("/admin");
+  redirect("/admin?info=Event berhasil disimpan");
 }
 
 export async function hapusEvent(form: FormData) {
-  const id = Number(form.get("id"));
-  const index = EVENTS.findIndex((x) => x.id === id);
-  if (index !== -1) EVENTS.splice(index, 1);
+  const id = String(form.get("id") || "");
+  const event = EVENTS.find((e: any) => String(e.id) === id);
+
+  // C: event berpesanan tidak bisa dihapus (di Supabase ini error 23503)
+  if (event && Number((event as any).terisi || 0) > 0) {
+    redirect("/admin?galat=Event tidak bisa dihapus karena sudah ada pesanan");
+  }
+
+  const i = EVENTS.findIndex((e: any) => String(e.id) === id);
+  if (i >= 0) EVENTS.splice(i, 1);
+
+  revalidatePath("/");
+  revalidatePath("/event");
+  revalidatePath("/admin");
   redirect("/admin?info=Event berhasil dihapus");
 }

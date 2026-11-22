@@ -17,7 +17,7 @@ export type Pesanan = {
   pesan: string;
 };
 
-let PESANAN: Pesanan[] = [];
+const PESANAN: Pesanan[] = [];
 let idPesanan = 1;
 
 export async function hitungPesanan(eventId: number) {

@@ -1,61 +1,62 @@
-// components/Navbar.tsx - FULL, DESAIN SAMA KAYAK LAYOUT LAMA KAMU
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const MENU = [
-  { label: "Beranda", href: "/" },
-  { label: "Event", href: "/event" },
-  { label: "Favorit", href: "/favorit" },
-  { label: "Pesanan", href: "/pesanan" },
-  { label: "Tentang", href: "/tentang" },
-  { label: "Admin", href: "/admin" },
-  { label: "Kontak", href: "/kontak" },
+const MENUS = [
+  { label: "Beranda", href: "/", warna: "#CCFBF1" },
+  { label: "Event", href: "/event", warna: "#FCE7F3" },
+  { label: "Favorit", href: "/favorit", warna: "#FEF3C7" },
+  { label: "Pesanan", href: "/pesanan", warna: "#CCFBF1" },
+  { label: "Tentang", href: "/tentang", warna: "#EDE9FE" },
+  { label: "Kontak", href: "/kontak", warna: "#FEF3C7" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
 
-  const isAktif = (href: string) => {
-    if (href === "/") return pathname === "/";
-    return pathname === href || pathname.startsWith(href + "/");
-  };
+  function gaya(href: string, warna: string, aktif: boolean) {
+    return {
+      background: aktif ? "#1E1B4B" : warna,
+      color: aktif ? "white" : "#1E1B4B",
+      padding: "9px 18px",
+      borderRadius: 999,
+      fontWeight: 800,
+      fontSize: 14,
+      textDecoration: "none" as const,
+      border: "2px solid transparent",
+    };
+  }
 
   return (
-    <header className="sticky top-0 z-50 border-b-2 border-[#FBBF24]/30 bg-[#334155] shadow-[0_10px_30px_rgba(0,0,0,0.6)]">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-        {/* Logo */}
-        <Link href="/" className="text-3xl font-black tracking-tight">
-          <span className="text-[#FBBF24]">Event</span>
-          <span className="text-[#2DD4BF]">Ku</span>
-        </Link>
-
-        {/* Menu Tengah - INI YANG UDAH DIBENERIN */}
-        <nav className="flex items-center gap-1 rounded-full bg-black/30 p-1.5 ring-1 ring-white/20">
-          {MENU.map((m) => (
-            <Link
-              key={m.href}
-              href={m.href}
-              className={
-                isAktif(m.href)
-                  ? "rounded-full bg-[#FB7185] px-4 py-2 text-sm font-black text-white shadow-lg shadow-[#FB7185]/30"
-                  : "rounded-full px-4 py-2 text-sm font-bold text-slate-200 hover:text-white"
-              }
-            >
-              {m.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Tombol Kanan */}
+    <nav
+      style={{
+        display: "flex",
+        gap: 8,
+        flexWrap: "wrap",
+        alignItems: "center",
+      }}
+    >
+      {MENUS.map((m) => (
         <Link
-          href="/event"
-          className="rounded-full bg-[#FBBF24] px-4 py-2.5 text-sm font-black text-slate-900 shadow-lg shadow-[#FBBF24]/30 transition hover:-translate-y-0.5"
+          key={m.href}
+          href={m.href}
+          style={gaya(m.href, m.warna, pathname === m.href)}
         >
-          Cari Event →
+          {m.label}
         </Link>
-      </div>
-    </header>
+      ))}
+
+      {/* ADMIN - sekarang cuma biru tua kalau LAGI di /admin */}
+      <Link
+        href="/admin"
+        style={gaya(
+          "/admin",
+          "#FCE7F3",
+          pathname === "/admin" || pathname.startsWith("/admin/"),
+        )}
+      >
+        • Admin
+      </Link>
+    </nav>
   );
 }

@@ -1,163 +1,234 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ambilEvents } from "@/data/ambil";
-import { rupiah, type Event } from "@/data/events";
-import { hapusEvent } from "@/app/admin/actions";
 
-export default async function Admin({
-  searchParams,
-}: {
-  searchParams: Promise<{ info?: string; galat?: string }>;
-}) {
-  const { info, galat } = await searchParams;
-  const events = await ambilEvents();
+export default function MasukAdmin() {
+  const [sandi, setSandi] = useState("");
+  const [lihat, setLihat] = useState(false);
+  const [sisa, setSisa] = useState(5);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  function masuk() {
+    if (sandi === "admin123") {
+      localStorage.setItem("admin", "ya");
+      router.push("/admin/kelola");
+    } else {
+      const baru = sisa - 1;
+      setSisa(Math.max(0, baru));
+      setError("Kata sandi salah! Coba lagi ya.");
+      setSandi("");
+    }
+  }
 
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginTop: 36,
-          flexWrap: "wrap",
-          gap: 12,
-        }}
-      >
-        <h1
-          style={{ fontSize: 38, fontWeight: 900, color: "#1E1B4B", margin: 0 }}
-        >
-          Kelola <span style={{ color: "#EC4899" }}>Event</span> 🎪
-        </h1>
-        <Link
-          href="/admin/baru"
+    <div style={{ marginTop: 10 }}>
+      <div style={{ textAlign: "center" }}>
+        <span
           style={{
-            background: "#FBBF24",
-            color: "#1E1B4B",
-            padding: "10px 20px",
+            background: "#CCFBF1",
+            color: "#0F766E",
+            padding: "8px 18px",
             borderRadius: 999,
             fontWeight: 800,
-            textDecoration: "none",
+            fontSize: 13,
           }}
         >
-          ➕ Tambah event
-        </Link>
+          ✨ PORTAL RESMI TIKET & EVENT SEKOLAH
+        </span>
+        <h1
+          style={{
+            fontSize: 38,
+            fontWeight: 900,
+            color: "#1E1B4B",
+            margin: "16px 0 6px",
+            lineHeight: 1.1,
+          }}
+        >
+          Halo, Admin! 👋
+        </h1>
+        <p style={{ color: "#64748B", margin: 0 }}>
+          Masuk untuk kelola event & pesanan EventKu
+        </p>
       </div>
-
-      {typeof info === "string" && (
-        <p
-          style={{
-            background: "#D9F99D",
-            color: "#365314",
-            padding: "10px 16px",
-            borderRadius: 16,
-            fontWeight: 700,
-            marginTop: 16,
-          }}
-        >
-          ✅ {info}
-        </p>
-      )}
-      {typeof galat === "string" && (
-        <p
-          style={{
-            background: "#FECACA",
-            color: "#991B1B",
-            padding: "10px 16px",
-            borderRadius: 16,
-            fontWeight: 700,
-            marginTop: 16,
-          }}
-        >
-          ❌ {galat}
-        </p>
-      )}
 
       <div
         style={{
+          maxWidth: 440,
+          margin: "24px auto 0",
           background: "white",
           borderRadius: 28,
-          border: "3px solid white",
-          boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-          overflow: "hidden",
-          marginTop: 20,
+          padding: 28,
+          boxShadow: "0 15px 30px rgba(0,0,0,0.08)",
         }}
       >
-        <table
-          style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}
+        <span
+          style={{
+            background: "#FCE7F3",
+            color: "#9D174D",
+            padding: "7px 14px",
+            borderRadius: 999,
+            fontSize: 13,
+            fontWeight: 800,
+          }}
         >
-          <thead>
-            <tr style={{ background: "#FEF3C7", textAlign: "left" }}>
-              <th style={{ padding: 14 }}>Event</th>
-              <th style={{ padding: 14 }}>Tanggal</th>
-              <th style={{ padding: 14 }}>Harga</th>
-              <th style={{ padding: 14 }}>Terisi</th>
-              <th style={{ padding: 14 }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {events.map((e: Event) => (
-              <tr key={e.id} style={{ borderTop: "1px solid #F1F5F9" }}>
-                <td style={{ padding: 14, fontWeight: 700, color: "#1E1B4B" }}>
-                  {e.judul}
-                </td>
-                <td style={{ padding: 14, color: "#64748B" }}>{e.tanggal}</td>
-                <td style={{ padding: 14 }}>{rupiah(e.harga)}</td>
-                <td style={{ padding: 14 }}>
-                  <span
-                    style={{
-                      background: "#CCFBF1",
-                      color: "#0F766E",
-                      padding: "4px 12px",
-                      borderRadius: 999,
-                      fontWeight: 700,
-                      fontSize: 12,
-                    }}
-                  >
-                    {e.terisi}/{e.kuota}
-                  </span>
-                </td>
-                <td style={{ padding: 14 }}>
-                  <div
-                    style={{ display: "flex", gap: 8, alignItems: "center" }}
-                  >
-                    <Link
-                      href={`/admin/${e.id}/ubah`}
-                      style={{
-                        background: "#BAE6FD",
-                        color: "#0C4A6E",
-                        padding: "6px 14px",
-                        borderRadius: 999,
-                        fontWeight: 700,
-                        fontSize: 13,
-                        textDecoration: "none",
-                      }}
-                    >
-                      Ubah
-                    </Link>
-                    <form action={hapusEvent} style={{ margin: 0 }}>
-                      <input type="hidden" name="id" value={e.id} />
-                      <button
-                        style={{
-                          background: "#FECACA",
-                          color: "#991B1B",
-                          border: "none",
-                          padding: "6px 14px",
-                          borderRadius: 999,
-                          fontWeight: 700,
-                          fontSize: 13,
-                          cursor: "pointer",
-                        }}
-                      >
-                        Hapus
-                      </button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          🔒 MASUK ADMIN
+        </span>
+        <h2 style={{ color: "#1E1B4B", margin: "16px 0 0", lineHeight: 1.3 }}>
+          Selamat Datang
+          <br />
+          Kembali, Admin
+        </h2>
+
+        <div
+          style={{
+            display: "flex",
+            gap: 5,
+            alignItems: "center",
+            marginTop: 12,
+          }}
+        >
+          {[1, 2, 3, 4, 5].map((i) => (
+            <span
+              key={i}
+              style={{
+                width: 26,
+                height: 8,
+                borderRadius: 999,
+                background: i <= sisa ? "#FBBF24" : "#FDE68A",
+                display: "inline-block",
+              }}
+            />
+          ))}
+          <span
+            style={{
+              color: "#1E1B4B",
+              fontWeight: 700,
+              fontSize: 13,
+              marginLeft: 6,
+            }}
+          >
+            Sisa {sisa}/5 percobaan
+          </span>
+        </div>
+
+        <label
+          style={{
+            display: "block",
+            marginTop: 20,
+            color: "#1E1B4B",
+            fontWeight: 800,
+            fontSize: 13,
+          }}
+        >
+          🔑 KATA SANDI ADMIN *
+        </label>
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            marginTop: 10,
+            background: "#FFF7ED",
+            borderRadius: 999,
+            padding: 6,
+            border: "2px solid #FDE68A",
+          }}
+        >
+          <input
+            type={lihat ? "text" : "password"}
+            value={sandi}
+            onChange={(e) => setSandi(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && masuk()}
+            placeholder="••••••••"
+            style={{
+              flex: 1,
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              color: "#1E1B4B",
+              padding: "8px 14px",
+              fontSize: 16,
+              fontWeight: 600,
+            }}
+          />
+          <button
+            onClick={() => setLihat(!lihat)}
+            style={{
+              background: "white",
+              color: "#1E1B4B",
+              border: "2px solid #E5E7EB",
+              borderRadius: 999,
+              padding: "8px 16px",
+              fontWeight: 700,
+              cursor: "pointer",
+            }}
+          >
+            👁️ Lihat
+          </button>
+        </div>
+
+        {error && (
+          <p
+            style={{
+              color: "#DC2626",
+              background: "#FEF2F2",
+              padding: "10px 14px",
+              borderRadius: 14,
+              fontSize: 13,
+              fontWeight: 700,
+              marginTop: 12,
+            }}
+          >
+            ⚠️ {error}
+          </p>
+        )}
+
+        <button
+          onClick={masuk}
+          disabled={sisa <= 0}
+          style={{
+            width: "100%",
+            marginTop: 16,
+            background: "#FBBF24",
+            color: "#1E1B4B",
+            border: "none",
+            borderRadius: 999,
+            padding: "13px",
+            fontWeight: 800,
+            cursor: "pointer",
+            fontSize: 15,
+            boxShadow: "0 8px 16px rgba(251,191,36,0.4)",
+            opacity: sisa <= 0 ? 0.5 : 1,
+          }}
+        >
+          🔓 Masuk ke Admin →
+        </button>
+
+        <p
+          style={{
+            textAlign: "center",
+            color: "#64748B",
+            fontSize: 12,
+            marginTop: 14,
+          }}
+        >
+          🔒 Sesi aman •{" "}
+          <Link href="/" style={{ color: "#1E1B4B", fontWeight: 700 }}>
+            Balik ke Beranda
+          </Link>
+        </p>
+        <p
+          style={{
+            textAlign: "center",
+            color: "#64748B",
+            fontSize: 12,
+            margin: "8px 0 0",
+          }}
+        >
+          Coba sandi: <b style={{ color: "#1E1B4B" }}>admin123</b>
+        </p>
       </div>
-    </>
+    </div>
   );
 }
