@@ -1,9 +1,7 @@
-// components/LoginForm.tsx - CLIENT COMPONENT
-// "use client" WAJIB BARIS PALING PERTAMA! Gak boleh ada export / import / apapun di atasnya!
-
+// components/LoginForm.tsx - VERSI 3 FINAL, TANPA useSearchParams!
 "use client";
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginForm() {
@@ -11,9 +9,14 @@ export default function LoginForm() {
   const [lihat, setLihat] = useState(false);
   const [sisa, setSisa] = useState(5);
   const [error, setError] = useState("");
+  const [dari, setDari] = useState("/admin/kelola");
   const router = useRouter();
-  const cari = useSearchParams();
-  const dari = cari.get("dari") || "/admin/kelola";
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const d = params.get("dari");
+    if (d) setDari(d);
+  }, []);
 
   function masuk() {
     if (sandi === "admin123") {
@@ -68,7 +71,6 @@ export default function LoginForm() {
         <p style={{ color: "#C4B5FD", margin: 0 }}>
           Masuk untuk kelola event & pesanan
         </p>
-
         <div
           style={{
             background: "linear-gradient(135deg,#1E103A,#4C1D95)",
@@ -105,7 +107,6 @@ export default function LoginForm() {
             <br />
             Kembali, Admin 👋
           </h2>
-
           <div
             style={{
               display: "flex",
@@ -133,7 +134,6 @@ export default function LoginForm() {
               Sisa {sisa}/5 percobaan
             </span>
           </div>
-
           <label
             style={{
               display: "block",
@@ -186,7 +186,6 @@ export default function LoginForm() {
               👁 Lihat
             </button>
           </div>
-
           {error && (
             <p
               style={{
@@ -199,7 +198,6 @@ export default function LoginForm() {
               ⚠ {error}
             </p>
           )}
-
           <button
             onClick={masuk}
             disabled={sisa <= 0}
@@ -219,7 +217,6 @@ export default function LoginForm() {
           >
             🔓 Masuk ke Admin →
           </button>
-
           <p
             style={{
               textAlign: "center",
