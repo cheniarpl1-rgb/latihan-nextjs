@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 export const dynamic = "force-dynamic";
 
-export default function LoginAdmin() {
+function LoginAdmin() {
   const [sandi, setSandi] = useState("");
   const [lihat, setLihat] = useState(false);
   const [sisa, setSisa] = useState(5);
@@ -269,5 +269,13 @@ export default function LoginAdmin() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginAdmin />
+    </Suspense>
   );
 }
