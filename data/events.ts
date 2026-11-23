@@ -83,7 +83,7 @@ export const EVENTS: Event[] = [
     gambar:
       "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&q=80",
     deskripsi:
-      "Belajar bikin poster keren pakai 【entity-Canva¦canonical_name=Canva】 dan 【entity-Figma¦canonical_name=Figma】 dari dasar sampai jadi.",
+      "Belajar bikin poster keren pakai Canva dan Figma dari dasar sampai jadi.",
     warna: "#CCFBF1",
   },
   {
