@@ -1,191 +1,292 @@
 "use client";
 import { useState } from "react";
 
-export default function Kontak() {
+export default function KontakPage() {
   const [nama, setNama] = useState("");
-  const [kontak, setKontak] = useState("");
+  const [email, setEmail] = useState("");
   const [pesan, setPesan] = useState("");
-  const [kirim, setKirim] = useState(false);
+  const [sukses, setSukses] = useState(false);
+
+  function kirim(e: any) {
+    e.preventDefault();
+    if (!nama || !email || !pesan) {
+      alert("Isi nama, email, dan pesan dulu ya!");
+      return;
+    }
+    setSukses(true);
+    setNama("");
+    setEmail("");
+    setPesan("");
+  }
+
+  const CSS = `<style>
+    @keyframes goyang{0%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}100%{transform:rotate(-2deg)}}
+    .kartu{transition:all .3s ease}
+    .kartu:hover{transform:translateY(-8px) scale(1.03) rotate(-1deg);box-shadow:0 14px 0 #1E1B4B, 0 25px 40px rgba(30,27,75,.3)!important}
+    .goyang:hover{animation:goyang .4s ease infinite}
+    .hov{display:inline-block;transition:all .2s ease;cursor:default;color:#0A0A1A}
+    .hov:hover{background:#FBBF24;color:#0A0A1A;transform:translateY(-3px) scale(1.06) rotate(-1deg);padding:2px 10px;border-radius:999px;font-weight:900;box-shadow:0 6px 14px rgba(0,0,0,.2)}
+  </style>`;
+
+  const INP: any = {
+    width: "100%",
+    boxSizing: "border-box",
+    padding: "12px 14px",
+    borderRadius: 12,
+    border: "2px solid #1E1B4B",
+    margin: "5px 0 12px",
+    outline: "none",
+    fontSize: 14,
+    background: "white",
+    color: "#1E1B4B",
+  };
 
   return (
-    <div style={{ marginTop: 36 }}>
-      <style>{`
-        .card-hover { transition: all 0.25s ease; cursor: pointer; }
-        .card-hover:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 20px 35px rgba(0,0,0,0.18) !important; border-color: #1E1B4B !important; }
-      `}</style>
-
-      <h1
-        style={{ fontSize: 38, fontWeight: 900, color: "#1E1B4B", margin: 0 }}
-      >
-        Hubungi Kami <span>💬</span>
-      </h1>
-      <p style={{ color: "#64748B", fontSize: 17 }}>
-        Ada pertanyaan soal event? Chat kami, dibalas panitia secepatnya.
-      </p>
-
+    <div
+      style={{
+        background:
+          "linear-gradient(180deg,#FFE4E6 0%,#FEF3C7 35%,#D1FAE5 65%,#DBEAFE 100%)",
+        minHeight: "100vh",
+      }}
+    >
+      <div dangerouslySetInnerHTML={{ __html: CSS }} />
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
-          gap: 16,
-          marginTop: 20,
-        }}
+        style={{ maxWidth: 900, margin: "0 auto", padding: "18px 16px 80px" }}
       >
         <div
-          className="card-hover"
           style={{
-            background: "#CCFBF1",
-            borderRadius: 24,
-            border: "3px solid white",
-            padding: 20,
-            boxShadow: "0 12px 22px rgba(0,0,0,0.10)",
+            background: "linear-gradient(90deg,#BAE6FD,#FBCFE8,#FEF3C7)",
+            border: "3px solid #1E1B4B",
+            boxShadow: "0 8px 0 #1E1B4B",
+            borderRadius: 22,
+            padding: "26px 28px",
           }}
         >
-          <p style={{ fontSize: 28, margin: 0 }}>📍</p>
-          <b style={{ color: "#1E1B4B" }}>Sekolah</b>
-          <p style={{ margin: "6px 0 0", color: "#334155" }}>
-            Jl. Lolaras, Karangkates
-          </p>
-        </div>
-        <div
-          className="card-hover"
-          style={{
-            background: "#FBCFE8",
-            borderRadius: 24,
-            border: "3px solid white",
-            padding: 20,
-            boxShadow: "0 12px 22px rgba(0,0,0,0.10)",
-          }}
-        >
-          <p style={{ fontSize: 28, margin: 0 }}>📧</p>
-          <b style={{ color: "#1E1B4B" }}>Email</b>
-          <p style={{ margin: "6px 0 0", color: "#334155" }}>
-            halo@eventku.sch.id
-          </p>
-        </div>
-        <a
-          href="https://wa.me/6281234567890"
-          target="_blank"
-          className="card-hover"
-          style={{
-            background: "#D9F99D",
-            borderRadius: 24,
-            border: "3px solid white",
-            padding: 20,
-            boxShadow: "0 12px 22px rgba(0,0,0,0.10)",
-            textDecoration: "none",
-            display: "block",
-          }}
-        >
-          <p style={{ fontSize: 28, margin: 0 }}>💬</p>
-          <b style={{ color: "#1E1B4B" }}>WA Panitia</b>
-          <p style={{ margin: "6px 0 0", color: "#334155" }}>
-            0812-3456-7890 → Chat →
-          </p>
-        </a>
-      </div>
-
-      <div
-        className="card-hover"
-        style={{
-          background: "white",
-          borderRadius: 28,
-          border: "3px solid white",
-          boxShadow: "0 12px 25px rgba(0,0,0,0.12)",
-          padding: 28,
-          marginTop: 20,
-        }}
-      >
-        <h2 style={{ color: "#1E1B4B", marginTop: 0 }}>Kirim Pesan ✉️</h2>
-        <label style={{ fontWeight: 700, fontSize: 13, color: "#1E1B4B" }}>
-          Nama
-        </label>
-        <input
-          value={nama}
-          onChange={(e) => setNama(e.target.value)}
-          placeholder="Nama kamu"
-          style={{
-            display: "block",
-            width: "100%",
-            boxSizing: "border-box",
-            borderRadius: 16,
-            border: "1px solid #E5E7EB",
-            padding: "12px 16px",
-            margin: "6px 0 14px",
-            outline: "none",
-          }}
-        />
-        <label style={{ fontWeight: 700, fontSize: 13, color: "#1E1B4B" }}>
-          Email / WA
-        </label>
-        <input
-          value={kontak}
-          onChange={(e) => setKontak(e.target.value)}
-          placeholder="Email / WA"
-          style={{
-            display: "block",
-            width: "100%",
-            boxSizing: "border-box",
-            borderRadius: 16,
-            border: "1px solid #E5E7EB",
-            padding: "12px 16px",
-            margin: "6px 0 14px",
-            outline: "none",
-          }}
-        />
-        <label style={{ fontWeight: 700, fontSize: 13, color: "#1E1B4B" }}>
-          Pesan
-        </label>
-        <textarea
-          value={pesan}
-          onChange={(e) => setPesan(e.target.value)}
-          placeholder="Tulis pertanyaan kamu..."
-          rows={4}
-          style={{
-            display: "block",
-            width: "100%",
-            boxSizing: "border-box",
-            borderRadius: 16,
-            border: "1px solid #E5E7EB",
-            padding: "12px 16px",
-            margin: "6px 0 14px",
-            outline: "none",
-            fontFamily: "inherit",
-          }}
-        />
-        {kirim ? (
-          <p
+          <h1
             style={{
-              background: "#D9F99D",
-              color: "#365314",
-              padding: "12px",
-              borderRadius: 16,
-              fontWeight: 700,
+              margin: "0 0 8px",
+              fontSize: 32,
+              fontWeight: 900,
+              color: "#0A0A1A",
+            }}
+          >
+            <span className="hov">Hubungi Kami 👋</span>
+          </h1>
+          <p style={{ margin: 0, color: "#0A0A1A", fontWeight: 700 }}>
+            <span className="hov">
+              Ada pertanyaan soal event? Chat aja, kami bales secepatnya.
+            </span>
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
+            gap: 18,
+            marginTop: 18,
+          }}
+        >
+          {/* EMAIL - luar biru pastel, dalem biru muda pastel, bukan putih lagi */}
+          <div
+            className="kartu"
+            style={{
+              background: "#BFDBFE",
+              border: "3px solid #1E1B4B",
+              boxShadow: "0 8px 0 #1E1B4B, 0 16px 30px rgba(30,27,75,.2)",
+              borderRadius: 20,
+              padding: "22px 16px",
               textAlign: "center",
             }}
           >
-            ✅ Pesan terkirim! Makasih, {nama}.
-          </p>
-        ) : (
-          <button
-            onClick={() => {
-              if (!nama || !pesan) return alert("Isi nama & pesan dulu ya!");
-              setKirim(true);
-            }}
+            <div style={{ fontSize: 32 }}>📧</div>
+            <h3
+              style={{
+                margin: "10px 0 6px",
+                color: "#0A0A1A",
+                fontSize: 18,
+                fontWeight: 900,
+              }}
+            >
+              <span className="hov">Email</span>
+            </h3>
+            <p
+              style={{
+                margin: 0,
+                color: "#0A0A1A",
+                fontWeight: 800,
+                fontSize: 14,
+                background: "#DBEAFE",
+                padding: "9px 10px",
+                borderRadius: 12,
+                border: "2px solid #93C5FD",
+              }}
+            >
+              <span className="hov">eventku@sekolah.id</span>
+            </p>
+          </div>
+
+          {/* WHATSAPP - luar hijau pastel, dalem hijau muda pastel */}
+          <div
+            className="kartu"
             style={{
-              width: "100%",
-              background: "#1E1B4B",
-              color: "white",
-              border: "none",
-              borderRadius: 999,
-              padding: "13px",
-              fontWeight: 800,
-              cursor: "pointer",
+              background: "#BBF7D0",
+              border: "3px solid #1E1B4B",
+              boxShadow: "0 8px 0 #1E1B4B, 0 16px 30px rgba(30,27,75,.2)",
+              borderRadius: 20,
+              padding: "22px 16px",
+              textAlign: "center",
             }}
           >
-            Kirim Pesan →
-          </button>
-        )}
+            <div style={{ fontSize: 32 }}>📱</div>
+            <h3
+              style={{
+                margin: "10px 0 6px",
+                color: "#0A0A1A",
+                fontSize: 18,
+                fontWeight: 900,
+              }}
+            >
+              <span className="hov">WhatsApp</span>
+            </h3>
+            <p
+              style={{
+                margin: 0,
+                color: "#0A0A1A",
+                fontWeight: 800,
+                fontSize: 14,
+                background: "#DCFCE7",
+                padding: "9px 10px",
+                borderRadius: 12,
+                border: "2px solid #86EFAC",
+              }}
+            >
+              <span className="hov">0812-3456-7890</span>
+            </p>
+          </div>
+
+          {/* LOKASI - luar pink pastel, dalem pink muda pastel */}
+          <div
+            className="kartu"
+            style={{
+              background: "#FBCFE8",
+              border: "3px solid #1E1B4B",
+              boxShadow: "0 8px 0 #1E1B4B, 0 16px 30px rgba(30,27,75,.2)",
+              borderRadius: 20,
+              padding: "22px 16px",
+              textAlign: "center",
+            }}
+          >
+            <div style={{ fontSize: 32 }}>📍</div>
+            <h3
+              style={{
+                margin: "10px 0 6px",
+                color: "#0A0A1A",
+                fontSize: 18,
+                fontWeight: 900,
+              }}
+            >
+              <span className="hov">Lokasi</span>
+            </h3>
+            <p
+              style={{
+                margin: 0,
+                color: "#0A0A1A",
+                fontWeight: 800,
+                fontSize: 14,
+                background: "#FCE7F3",
+                padding: "9px 10px",
+                borderRadius: 12,
+                border: "2px solid #F9A8D4",
+              }}
+            >
+              <span className="hov">SMK Brantas Karangkates</span>
+            </p>
+          </div>
+        </div>
+
+        <div
+          style={{
+            background: "white",
+            border: "3px solid #1E1B4B",
+            boxShadow: "0 8px 0 #1E1B4B",
+            borderRadius: 20,
+            padding: 22,
+            marginTop: 18,
+          }}
+        >
+          <h2
+            style={{
+              margin: "0 0 14px",
+              color: "#0A0A1A",
+              fontSize: 20,
+              fontWeight: 900,
+            }}
+          >
+            <span className="hov">Kirim Pesan</span>
+          </h2>
+          {sukses && (
+            <div
+              style={{
+                background: "#ECFDF5",
+                border: "2px solid #10B981",
+                borderRadius: 12,
+                padding: 12,
+                marginBottom: 12,
+                textAlign: "center",
+              }}
+            >
+              <b style={{ color: "#065F46" }}>Pesan terkirim! Makasih ya 🙏</b>
+            </div>
+          )}
+          <form onSubmit={kirim}>
+            <label style={{ color: "#0A0A1A", fontSize: 13, fontWeight: 800 }}>
+              <span className="hov">Nama Lengkap</span>
+            </label>
+            <input
+              type="text"
+              value={nama}
+              onChange={(e: any) => setNama(e.target.value)}
+              placeholder="Contoh: Cenia"
+              style={INP}
+            />
+            <label style={{ color: "#0A0A1A", fontSize: 13, fontWeight: 800 }}>
+              <span className="hov">Email</span>
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e: any) => setEmail(e.target.value)}
+              placeholder="cenia@gmail.com"
+              style={INP}
+            />
+            <label style={{ color: "#0A0A1A", fontSize: 13, fontWeight: 800 }}>
+              <span className="hov">Pesan</span>
+            </label>
+            <textarea
+              value={pesan}
+              onChange={(e: any) => setPesan(e.target.value)}
+              placeholder="Tulis pertanyaanmu soal event..."
+              style={{ ...INP, minHeight: 100, resize: "vertical" }}
+            />
+            <button
+              type="submit"
+              className="goyang"
+              style={{
+                width: "100%",
+                background: "#FBBF24",
+                color: "#0A0A1A",
+                border: "3px solid #1E1B4B",
+                padding: 13,
+                borderRadius: 999,
+                fontWeight: 900,
+                cursor: "pointer",
+              }}
+            >
+              Kirim Pesan →
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

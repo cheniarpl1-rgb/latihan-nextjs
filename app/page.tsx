@@ -1,48 +1,131 @@
 "use client";
-import { useState } from "react";
 
 export default function BerandaPage() {
+  const CSS = `<style>
+    @keyframes goyang{0%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}100%{transform:rotate(-2deg)}}
+    @keyframes melayang{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .goyang:hover{animation:goyang .4s ease infinite}
+    .hov{display:inline-block;transition:all .2s ease;cursor:default}
+    .hov:hover{background:#FBBF24;color:#0A0A1A!important;-webkit-text-fill-color:#0A0A1A!important;transform:translateY(-3px) scale(1.08) rotate(-2deg);padding:2px 10px;border-radius:999px;font-weight:900;box-shadow:0 6px 14px rgba(0,0,0,.2)}
+    .kata{display:inline-block;transition:all .2s ease;cursor:default;line-height:1.05}
+    .kata:hover{transform:translateY(-6px) scale(1.08) rotate(-2deg)}
+  </style>`;
+
   return (
-    <div style={{ background: "#FFF7ED", minHeight: "100vh" }}>
+    <div
+      style={{
+        background:
+          "linear-gradient(180deg,#FFE4E6 0%,#FEF3C7 35%,#D1FAE5 65%,#DBEAFE 100%)",
+        minHeight: "100vh",
+      }}
+    >
+      <div dangerouslySetInnerHTML={{ __html: CSS }} />
       <div
         style={{
-          maxWidth: 800,
+          maxWidth: 980,
           margin: "0 auto",
-          padding: "40px 20px 60px",
+          padding: "28px 16px 80px",
           textAlign: "center",
         }}
       >
         <span
+          className="goyang"
           style={{
+            display: "inline-block",
             background: "#CCFBF1",
+            border: "2px solid #99F6E4",
             color: "#0F766E",
             padding: "8px 18px",
             borderRadius: 999,
-            fontWeight: 800,
-            fontSize: 13,
+            fontSize: 12,
+            fontWeight: 900,
+            letterSpacing: 1,
           }}
         >
           ✨ PORTAL RESMI TIKET & EVENT SEKOLAH
         </span>
+
+        {/* JUDUL - PASTEL + FONT GEDE */}
         <h1
           style={{
-            fontSize: 52,
+            margin: "18px 0 14px",
+            fontSize: 76,
             fontWeight: 900,
-            color: "#1E1B4B",
-            margin: "20px 0 14px",
-            lineHeight: 1.1,
+            lineHeight: 1.02,
+            letterSpacing: -1,
           }}
         >
-          Cari Event Seru,
+          <span
+            className="kata hov"
+            style={{
+              color: "#5EEAD4",
+              WebkitTextStroke: "2px #1E1B4B",
+              textShadow: "4px 4px 0 #1E1B4B",
+            }}
+          >
+            Cari&nbsp;
+          </span>
+          <span
+            className="kata hov"
+            style={{
+              color: "#F9A8D4",
+              WebkitTextStroke: "2px #1E1B4B",
+              textShadow: "4px 4px 0 #1E1B4B",
+            }}
+          >
+            Event&nbsp;
+          </span>
+          <span
+            className="kata hov"
+            style={{
+              color: "#FDE68A",
+              WebkitTextStroke: "2px #1E1B4B",
+              textShadow: "4px 4px 0 #1E1B4B",
+            }}
+          >
+            Seru,
+          </span>
           <br />
-          Gak Pake Ribet.
+          <span
+            className="kata hov"
+            style={{
+              color: "#C4B5FD",
+              WebkitTextStroke: "2px #1E1B4B",
+              textShadow: "4px 4px 0 #1E1B4B",
+            }}
+          >
+            Gak&nbsp;
+          </span>
+          <span
+            className="kata hov"
+            style={{
+              color: "#93C5FD",
+              WebkitTextStroke: "2px #1E1B4B",
+              textShadow: "4px 4px 0 #1E1B4B",
+            }}
+          >
+            Pake&nbsp;
+          </span>
+          <span
+            className="kata hov"
+            style={{
+              color: "#FDA4AF",
+              WebkitTextStroke: "2px #1E1B4B",
+              textShadow: "4px 4px 0 #1E1B4B",
+            }}
+          >
+            Ribet.
+          </span>
         </h1>
+
         <p
           style={{
-            color: "#64748B",
-            fontSize: 18,
-            lineHeight: 1.7,
             margin: "0 auto",
+            maxWidth: 620,
+            color: "#475569",
+            fontWeight: 700,
+            fontSize: 16,
+            lineHeight: 1.7,
           }}
         >
           Selamat datang di EventKu. Satu tempat untuk semua keseruan sekolahmu.
@@ -50,38 +133,42 @@ export default function BerandaPage() {
           bazar, semuanya bisa kamu temukan di sini tanpa harus tanya sana-sini
           lagi.
         </p>
+
         <div
           style={{
             display: "flex",
-            justifyContent: "center",
             gap: 12,
-            marginTop: 24,
+            justifyContent: "center",
+            marginTop: 22,
             flexWrap: "wrap",
           }}
         >
           <a
             href="/event"
+            className="goyang"
             style={{
               background: "#1E1B4B",
               color: "white",
-              padding: "14px 30px",
+              padding: "13px 24px",
               borderRadius: 999,
-              fontWeight: 800,
+              fontWeight: 900,
               textDecoration: "none",
+              boxShadow: "0 5px 0 rgba(0,0,0,.25)",
             }}
           >
             Lihat Semua Event →
           </a>
           <a
             href="/favorit"
+            className="goyang"
             style={{
               background: "white",
-              color: "#1E1B4B",
-              padding: "14px 26px",
+              color: "#0A0A1A",
+              border: "2px solid #E5E7EB",
+              padding: "12px 22px",
               borderRadius: 999,
-              fontWeight: 800,
+              fontWeight: 900,
               textDecoration: "none",
-              border: "1px solid #E5E7EB",
             }}
           >
             ❤️ Favoritku
@@ -91,155 +178,81 @@ export default function BerandaPage() {
         <div
           style={{
             display: "flex",
-            justifyContent: "center",
             gap: 32,
-            marginTop: 36,
+            justifyContent: "center",
+            marginTop: 32,
             flexWrap: "wrap",
           }}
         >
           <div>
-            <b style={{ fontSize: 26, color: "#1E1B4B" }}>120+</b>
-            <br />
-            <span style={{ color: "#64748B", fontSize: 13 }}>Event Sukses</span>
+            <div style={{ fontSize: 28, fontWeight: 900, color: "#0A0A1A" }}>
+              <span className="hov">120+</span>
+            </div>
+            <p
+              style={{
+                margin: "4px 0 0",
+                color: "#64748B",
+                fontWeight: 700,
+                fontSize: 13,
+              }}
+            >
+              Event Sukses
+            </p>
           </div>
           <div>
-            <b style={{ fontSize: 26, color: "#1E1B4B" }}>2.500+</b>
-            <br />
-            <span style={{ color: "#64748B", fontSize: 13 }}>
+            <div style={{ fontSize: 28, fontWeight: 900, color: "#0A0A1A" }}>
+              <span className="hov">2.500+</span>
+            </div>
+            <p
+              style={{
+                margin: "4px 0 0",
+                color: "#64748B",
+                fontWeight: 700,
+                fontSize: 13,
+              }}
+            >
               Tiket Terjual
-            </span>
+            </p>
           </div>
           <div>
-            <b style={{ fontSize: 26, color: "#1E1B4B" }}>4.9 ★</b>
-            <br />
-            <span style={{ color: "#64748B", fontSize: 13 }}>Rating Siswa</span>
+            <div style={{ fontSize: 28, fontWeight: 900, color: "#0A0A1A" }}>
+              <span className="hov">4.9 ★</span>
+            </div>
+            <p
+              style={{
+                margin: "4px 0 0",
+                color: "#64748B",
+                fontWeight: 700,
+                fontSize: 13,
+              }}
+            >
+              Rating Siswa
+            </p>
           </div>
         </div>
-      </div>
 
-      <div
-        style={{
-          maxWidth: 800,
-          margin: "0 auto",
-          padding: "0 20px 20px",
-          textAlign: "left",
-        }}
-      >
         <h2
           style={{
-            color: "#1E1B4B",
-            fontSize: 28,
-            textAlign: "center",
-            margin: "0 0 8px",
+            margin: "52px 0 10px",
+            fontSize: 30,
+            fontWeight: 900,
+            color: "#0A0A1A",
           }}
         >
-          Kenapa harus pakai EventKu?
+          <span className="hov">Kenapa harus pakai EventKu?</span>
         </h2>
         <p
           style={{
+            margin: "0 auto",
+            maxWidth: 620,
             color: "#64748B",
-            textAlign: "center",
-            lineHeight: 1.7,
-            margin: "0 0 24px",
+            fontWeight: 600,
+            fontSize: 15,
+            lineHeight: 1.6,
           }}
         >
           Karena dulu, buat ikut satu event aja kamu harus cari info ke
-          sana-sini, tanya kakak kelas, cek grup, dan ujung-ujungnya kehabisan
-          kuota. Di sini, semua info itu udah dikumpulin jadi satu.
-        </p>
-
-        <div style={{ display: "grid", gap: 14 }}>
-          {[
-            {
-              judul: "💻 Workshop - Buat kamu yang pengen jago",
-              isi: "Mau belajar bikin web, bikin poster, atau skill baru lainnya? Di workshop kamu belajar langsung dari kakak kelas dan pemateri yang udah berpengalaman. Gak cuma dengerin, tapi langsung praktek dan pulang bawa karya.",
-            },
-            {
-              judul: "⚽ Olahraga - Buat kamu yang suka tantangan",
-              isi: "Turnamen futsal antar kelas selalu jadi yang paling ramai. Bukan cuma soal menang, tapi soal kekompakan, sportivitas, dan seru-seruan bareng teman satu tim. Siap jadi juara tahun ini?",
-            },
-            {
-              judul: "🎸 Musik - Buat kamu yang suka tampil",
-              isi: "Malam akustik adalah panggung buat kamu yang suka nyanyi dan main musik. Bawain lagu hits, lagu ciptaan sendiri, atau sekadar nonton dan nyanyi bareng. Suasananya selalu bikin nagih.",
-            },
-            {
-              judul: "🛍️ Bazar - Buat kamu yang suka jajan dan belanja",
-              isi: "Bazar adalah tempatnya karya siswa dan jajanan enak berkumpul. Kamu bisa jajan, belanja, sekaligus dukung usaha teman-temanmu. Siapa tau kamu nemu barang unik yang gak ada di tempat lain.",
-            },
-            {
-              judul: "🏆 Lomba - Buat kamu yang suka adu pintar",
-              isi: "Lomba cerdas cermat dan lomba lainnya adalah tempat buat buktiin kalau kamu bukan cuma pintar di kelas, tapi juga cepat dan berani. Ajak temanmu, bentuk tim, dan rebut hadiahnya.",
-            },
-          ].map((k) => (
-            <div
-              key={k.judul}
-              style={{
-                background: "white",
-                borderRadius: 20,
-                padding: 22,
-                boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
-              }}
-            >
-              <b style={{ color: "#1E1B4B", fontSize: 17 }}>{k.judul}</b>
-              <p
-                style={{
-                  color: "#475569",
-                  lineHeight: 1.7,
-                  margin: "8px 0 0",
-                  fontSize: 15,
-                }}
-              >
-                {k.isi}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div
-        style={{
-          maxWidth: 800,
-          margin: "0 auto",
-          padding: "20px 20px 60px",
-          textAlign: "center",
-        }}
-      >
-        <div
-          style={{
-            background: "#1E1B4B",
-            borderRadius: 28,
-            padding: 30,
-            color: "white",
-          }}
-        >
-          <h2 style={{ margin: "0 0 10px", fontSize: 26 }}>
-            Cara pesannya gampang banget.
-          </h2>
-          <p style={{ color: "#C7D2FE", lineHeight: 1.7, margin: "0 0 20px" }}>
-            Pertama, kamu buka halaman Event dan pilih event yang kamu suka.
-            Kedua, kamu isi nama dan kelasmu lalu pilih jumlah tiketnya. Ketiga,
-            tiketmu langsung tersimpan dan kamu tinggal tunjukin saat datang.
-            Udah, segampang itu. Gak perlu antre, gak perlu ribet.
-          </p>
-          <a
-            href="/event"
-            style={{
-              display: "inline-block",
-              background: "#FBBF24",
-              color: "#1E1B4B",
-              padding: "13px 28px",
-              borderRadius: 999,
-              fontWeight: 800,
-              textDecoration: "none",
-            }}
-          >
-            Cari Event Sekarang →
-          </a>
-        </div>
-        <p style={{ color: "#64748B", marginTop: 24, lineHeight: 1.7 }}>
-          Jangan sampai kamu cuma denger cerita serunya dari temanmu. Amankan
-          kursimu, ajak temanmu, dan bikin kenangan bareng di event sekolah
-          tahun ini.
+          sana-sini, tanya kakak kelas, cek grup, dan
         </p>
       </div>
     </div>
